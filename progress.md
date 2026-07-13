@@ -18,3 +18,6 @@
 - ✅ `HandshakeRegistry` deployed to Monad testnet: `0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`
 - ✅ Source verified (Sourcify exact match); live view calls sanity-checked
 - ⏳ Next: scaffold React + Vite + wagmi in `web/`, wallet connect on chain 10143
+- ✅ `web/` scaffolded: React + Vite + TS, wagmi/viem wired to chain 10143,
+  wallet connect with wrong-network prompt, live `agreementCount()` read from
+  the deployed contract rendering in-browser (verified, no console errors)

@@ -17,7 +17,7 @@ Full requirements live in the project brief; this file tracks execution.
 - [x] Fund deployer wallet from Monad testnet faucet (5 MON via official faucet, Discord tier)
 - [x] Deploy `HandshakeRegistry` to Monad testnet — `0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`
 - [x] Verify contract — Sourcify exact match via sourcify-api-monad.blockvision.org
-- [ ] Scaffold React + Vite + wagmi + viem in `web/`, wallet connect working against Monad testnet
+- [x] Scaffold React + Vite + wagmi + viem in `web/`; live chain read rendering in-browser (wallet-connect click-test with MetaMask pending — needs Tobi's browser)
 
 ## Day 3 (Jul 15–16) — Screens 1 & 2
 

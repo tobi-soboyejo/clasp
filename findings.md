@@ -33,3 +33,20 @@
 - Single git repo at root; `contracts/` is a Foundry project (forge-std as a
   proper submodule pinned to v1.16.2 — judges can `git clone --recursive`),
   `web/` comes Day 2.
+
+## 2026-07-13 — Day 2 (started same day, ahead of schedule)
+
+### Deployment
+- Deployer (throwaway, testnet-only): `0x195897846C31a77D913d658160cBfea4eC9a2009`,
+  key in `contracts/.env` (gitignored, chmod 600).
+- Faucets: QuickNode and Alchemy both REJECT fresh wallets (require ≥0.001 ETH
+  on Ethereum mainnet as anti-abuse). Official faucet via testnet.monad.xyz
+  paid the full 5 MON Discord tier. Plenty for deploy + Day 5 seeding.
+- Deployed `HandshakeRegistry` → `0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`
+  (tx `0x4b6eaedc0469c889375231f6223f2c42f84ca25940bcf0fa626a66c1dd935470`).
+- Sanity-checked live: `agreementCount()` = 0, `DISPUTE_WINDOW()` = 1209600 (14 days).
+- Verified via Sourcify (`--verifier sourcify --verifier-url
+  https://sourcify-api-monad.blockvision.org/`) — **exact_match**.
+- Network: chain ID 10143, RPC https://testnet-rpc.monad.xyz (also
+  rpc.testnet.monad.xyz per dev portal), explorers testnet.monadvision.com /
+  testnet.monadscan.com.

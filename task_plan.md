@@ -13,10 +13,10 @@ Full requirements live in the project brief; this file tracks execution.
 
 ## Day 2 (Jul 14–15) — Deploy + frontend scaffold
 
-- [ ] Install Monskills / read Monad deploy guide (docs.monad.xyz/guides/deploy-smart-contract)
-- [ ] Fund deployer wallet from Monad testnet faucet
-- [ ] Deploy `HandshakeRegistry` to Monad testnet, record address in README + findings.md
-- [ ] Verify contract (docs.monad.xyz/guides/verify-smart-contract) — solc pinned to make this painless
+- [x] Read Monad deploy/verify guides (used docs directly; Monskills not needed)
+- [x] Fund deployer wallet from Monad testnet faucet (5 MON via official faucet, Discord tier)
+- [x] Deploy `HandshakeRegistry` to Monad testnet — `0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`
+- [x] Verify contract — Sourcify exact match via sourcify-api-monad.blockvision.org
 - [ ] Scaffold React + Vite + wagmi + viem in `web/`, wallet connect working against Monad testnet
 
 ## Day 3 (Jul 15–16) — Screens 1 & 2

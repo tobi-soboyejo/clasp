@@ -56,7 +56,17 @@ PROPOSED ──cosign()──▶ ACTIVE ──confirmPaid()──▶ PAID (termi
 ```
 
 Reputation is computed **off-chain from events** — the contract stores no
-aggregate counters. Deployed contract address: *(coming — Day 2)*
+aggregate counters.
+
+### Deployment (Monad testnet)
+
+| | |
+|---|---|
+| Contract | [`0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`](https://testnet.monadvision.com/address/0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411) |
+| Chain ID | 10143 |
+| RPC | `https://testnet-rpc.monad.xyz` |
+| Deploy tx | `0x4b6eaedc0469c889375231f6223f2c42f84ca25940bcf0fa626a66c1dd935470` |
+| Source verified | Sourcify (exact match) — readable on the explorer |
 
 ## Run the tests
 

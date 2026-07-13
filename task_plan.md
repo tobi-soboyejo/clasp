@@ -9,7 +9,7 @@ Full requirements live in the project brief; this file tracks execution.
 - [x] Foundry toolchain installed (see findings.md for libusb workaround)
 - [x] `HandshakeRegistry.sol` written to spec
 - [x] Full test suite: happy path, default+dispute, silent default, all guard reverts (24 tests)
-- [ ] Public GitHub repo created and pushed
+- [x] Public GitHub repo created and pushed — https://github.com/tobi-soboyejo/handshake
 
 ## Day 2 (Jul 14–15) — Deploy + frontend scaffold
 

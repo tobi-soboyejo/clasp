@@ -9,4 +9,5 @@
   counters onchain, no funds movement
 - ✅ 24/24 Foundry tests passing (happy path, default+dispute, silent default,
   every guard revert, boundary conditions)
-- ⏳ Next: push to public GitHub repo → Day 2 (Monad testnet deploy + verify)
+- ✅ Public repo live: https://github.com/tobi-soboyejo/handshake (first commit ~20:20 UTC, after the 13:00 UTC freshness cutoff)
+- ⏳ Next: Day 2 — Monad testnet deploy + verify, then React/wagmi scaffold in `web/`

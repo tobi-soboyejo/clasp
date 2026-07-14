@@ -88,3 +88,20 @@
   arithmetic shown). No opaque scoring in v1.
 - README roadmap now frames the primitive as "any co-signed promise to pay"
   (rent next, landlord-accountability-first, rehabilitation framing).
+
+## 2026-07-13 — scope decision: Handshake Score v1.5 (Tobi + Claude)
+
+- Upgrade lookup grade → "Handshake Score": FICO-style 300–850, glass-box.
+  New factors, each anti-gaming: deal-size weighting (kills tiny-gig padding),
+  recency decay ~1yr half-life (implements rehabilitation mechanically,
+  absorbs the trend indicator), counterparty diversity (kills wash-trading
+  between own wallets). Provisional + window-open rules carry over. Full
+  breakdown printed on the card; formula in README. No ML, no opaque weights.
+- Build on Day 5 with seeding (needs varied/aged histories to verify).
+- Contract frozen at v1.1. Symmetric flags stay v2 (would split the grade's
+  meaning mid-demo).
+- Prepr bridge noted (Tobi): data-dividend payouts are recurring promises to
+  pay — publishing a payout record against co-signed commitments could be a
+  Prepr trust signal someday. Pattern kinship: glass-box scoring ↔ Prepr's
+  consent-first/member-owned data stance. Log to Prepr vault NOTES-FOR-LATER
+  in a Prepr session; no code bridge now.

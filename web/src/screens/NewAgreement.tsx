@@ -139,13 +139,17 @@ export function NewAgreement() {
 
       <form className="agreement-form" onSubmit={submit}>
         <label>
-          Client wallet address
+          Your client's wallet address
           <input
             value={client}
             onChange={(e) => setClient(e.target.value.trim())}
             placeholder="0x…"
             spellCheck={false}
           />
+          <span className="field-note">
+            Think of it as their account number. They can copy it from their
+            wallet app (MetaMask etc.) and text it to you.
+          </span>
         </label>
         <label>
           Amount (CAD)

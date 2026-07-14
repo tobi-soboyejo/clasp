@@ -23,10 +23,10 @@ import {
   loadTxHash,
   saveDisputeText,
   saveTxHash,
-  shortAddress,
   timeline,
   type TxKey,
 } from "../lib/agreements";
+import { AddressChip } from "../components/AddressChip";
 
 export function AgreementDetail() {
   const { id: idParam } = useParams();
@@ -136,17 +136,15 @@ export function AgreementDetail() {
 
       <dl className="terms">
         <div>
-          <dt>Freelancer (payee)</dt>
+          <dt>Freelancer (gets paid)</dt>
           <dd>
-            <code title={a.freelancer}>{shortAddress(a.freelancer)}</code>
-            {isFreelancer && <em> — you</em>}
+            <AddressChip address={a.freelancer} you={isFreelancer} />
           </dd>
         </div>
         <div>
-          <dt>Client (payer)</dt>
+          <dt>Client (pays)</dt>
           <dd>
-            <code title={a.client}>{shortAddress(a.client)}</code>
-            {isClient && <em> — you</em>}
+            <AddressChip address={a.client} you={isClient} />
           </dd>
         </div>
         <div>

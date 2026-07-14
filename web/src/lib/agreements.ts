@@ -64,6 +64,30 @@ export function loadTxHash(id: bigint, key: TxKey): string | null {
   return localStorage.getItem(txKeyFor(id, key));
 }
 
+/* Local nicknames ("petnames"): users label the wallets THEY deal with, like
+ * phone contacts. Deliberately not a global username registry — global names
+ * can be squatted and spoofed; a label you assigned yourself can't lie to
+ * you. Visible only in this browser. */
+
+const nameKey = (addr: string) => `handshake:name:${addr.toLowerCase()}`;
+
+export function saveNickname(addr: string, name: string) {
+  if (name.trim()) localStorage.setItem(nameKey(addr), name.trim());
+  else localStorage.removeItem(nameKey(addr));
+}
+
+export function loadNickname(addr: string): string | null {
+  return localStorage.getItem(nameKey(addr));
+}
+
+/** Deterministic two-tone gradient per address, so wallets are visually
+ *  distinguishable at a glance without reading hex. */
+export function identiconColors(addr: string): [string, string] {
+  const h1 = parseInt(addr.slice(2, 8), 16) % 360;
+  const h2 = (h1 + 40 + (parseInt(addr.slice(8, 12), 16) % 140)) % 360;
+  return [`hsl(${h1} 70% 55%)`, `hsl(${h2} 70% 45%)`];
+}
+
 /** Display status adds the offchain-derived "Expired" state for proposals
  *  whose deadline passed without a co-signature. */
 export function displayStatus(a: AgreementData, nowSec: bigint) {

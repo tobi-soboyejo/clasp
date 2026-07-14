@@ -9,9 +9,12 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <Link to="/" className="wordmark">
-          Handshake
-        </Link>
+        <div className="brand">
+          <Link to="/" className="wordmark">
+            Hand<em>shake</em>
+          </Link>
+          <span className="header-sub">Monad Testnet · Registry Nº 10143</span>
+        </div>
         <nav>
           <NavLink to="/">New agreement</NavLink>
           <NavLink to="/lookup">Look up a wallet</NavLink>

@@ -63,3 +63,8 @@
 - ✅ LIVE on Vercel: https://handshake-wine.vercel.app — verified from the
   public URL incl. deep link to the bad client's report card (reads Monad
   testnet directly from the browser). Day 5 complete.
+- ✅ Premium design pass v2 ("printed instrument"): banknote-edge top strip,
+  paper grain, ledger masthead + double rules, §-numbered sections, dotted
+  leaders, stamp-style score with count-up, Archivo/Spline Sans Mono
+  pairing, report banner on lookup. Verified desktop + mobile, no console
+  errors.

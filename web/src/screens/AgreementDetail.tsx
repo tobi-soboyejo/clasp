@@ -164,7 +164,7 @@ export function AgreementDetail() {
       </dl>
 
       <div className="scope-box">
-        <h2>Scope of work</h2>
+        <h2>§1 · Scope of work</h2>
         {scopeText ? (
           <>
             <p className="scope-text">{scopeText}</p>
@@ -184,7 +184,7 @@ export function AgreementDetail() {
         )}
         {disputeVerified && (
           <>
-            <h2>Client's dispute reason</h2>
+            <h2>§1a · Client's dispute reason</h2>
             <p className="scope-text">{disputeText}</p>
             <p className="verify-ok">✓ matches the onchain fingerprint</p>
           </>
@@ -266,7 +266,7 @@ export function AgreementDetail() {
         <p className="form-error">{writeError.message.split("\n")[0]}</p>
       )}
 
-      <h2>Onchain history</h2>
+      <h2>§2 · Onchain history</h2>
       <ol className="timeline">
         {timeline(a).map((step) => {
           const stepTx = loadTxHash(id, step.txKey);

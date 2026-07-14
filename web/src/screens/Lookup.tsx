@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { isAddress } from "viem";
 import { useAccount } from "wagmi";
@@ -10,6 +10,8 @@ import {
   formatTimestamp,
   statusClass,
 } from "../lib/agreements";
+import { shortAddress } from "../lib/agreements";
+import { HANDSHAKE_ADDRESS } from "../lib/config";
 import { computeReputation, type ScoredOutcome } from "../lib/reputation";
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
@@ -23,6 +25,32 @@ const KIND_LABEL: Record<ScoredOutcome["kind"], string> = {
 
 function scoreClass(band: string) {
   return `band-${band.toLowerCase().replace(" ", "-")}`;
+}
+
+/** The stamp doesn't just appear — it counts up from 300, like a meter
+ *  settling. ~650ms, ease-out, respects prefers-reduced-motion. */
+function ScoreNumber({ value }: { value: number }) {
+  const [shown, setShown] = useState(300);
+  const raf = useRef(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(value);
+      return;
+    }
+    const start = performance.now();
+    const from = 300;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / 650);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setShown(Math.round(from + (value - from) * eased));
+      if (p < 1) raf.current = requestAnimationFrame(tick);
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf.current);
+  }, [value]);
+
+  return <>{shown}</>;
 }
 
 export function Lookup() {
@@ -108,6 +136,18 @@ export function Lookup() {
       {wallet && rep && hs && (
         <>
           <div className="rep-card">
+            <div className="report-banner">
+              <span>Payment history report</span>
+              <span>
+                pulled{" "}
+                {new Date().toLocaleString("en-CA", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}{" "}
+                · registry {shortAddress(HANDSHAKE_ADDRESS)}
+              </span>
+            </div>
+            <div className="rep-body">
             <div className="rep-head">
               <AddressChip
                 address={wallet}
@@ -127,7 +167,9 @@ export function Lookup() {
 
             <div className="rep-grade-row">
               <div className={`rep-score ${scoreClass(hs.band)}`}>
-                <span className="rep-score-num">{hs.score ?? "—"}</span>
+                <span className="rep-score-num">
+                  {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
+                </span>
                 <span className="rep-score-band">{hs.band}</span>
                 {hs.provisional && hs.score !== null && (
                   <span className="rep-prov">provisional</span>
@@ -238,6 +280,7 @@ export function Lookup() {
                 </p>
               </details>
             )}
+            </div>
           </div>
 
           <h2>Agreements ({rows.length})</h2>

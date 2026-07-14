@@ -21,3 +21,18 @@
 - ✅ `web/` scaffolded: React + Vite + TS, wagmi/viem wired to chain 10143,
   wallet connect with wrong-network prompt, live `agreementCount()` read from
   the deployed contract rendering in-browser (verified, no console errors)
+
+## Day 3 — 2026-07-13 (early start)
+
+- ✅ Screen 1 (New Agreement): full form, client-side keccak256 of scope,
+  createAgreement write flow, shareable co-sign link + copy button
+- ✅ Screen 2 (Agreement Detail): terms, status badge, context-aware actions
+  (co-sign / confirm paid / flag default / dispute with reason), scope-text
+  fingerprint verification, state-derived onchain timeline
+- ✅ Contract v1.1: lifecycle timestamps in state + getAgreements batch view
+  (works around Monad RPC's 100-block getLogs cap — no indexer, no API keys);
+  redeployed + verified; 25/25 tests
+- ✅ Agreement #0 re-seeded with real txs (scripts/seed.sh); detail screen
+  verified rendering live chain data in browser
+- ⏳ Next: cosign/confirm click-through with MetaMask (needs Tobi), then
+  Day 4: lookup screen + transparent grade

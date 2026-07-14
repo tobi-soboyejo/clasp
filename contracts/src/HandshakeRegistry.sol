@@ -29,12 +29,17 @@ contract HandshakeRegistry {
         address client;
         uint256 amountCents; // fiat amount in cents (CAD), informational only
         uint64 deadline; // unix timestamp payment is due by
+        uint64 createdAt;
         uint64 cosignedAt;
         uint64 resolvedAt; // when Paid was confirmed or the default was flagged
+        uint64 disputedAt;
         bytes32 scopeHash; // keccak256 of the scope-of-work text (stored off-chain)
         bytes32 disputeHash; // keccak256 of the client's dispute reason, if any
         Status status;
     }
+    // Full lifecycle timestamps live in the struct so the entire history is
+    // reconstructable from state alone — Monad's public RPC caps eth_getLogs
+    // at a 100-block range, so clients must not depend on log scans.
 
     /// @notice How long after a default flag the client can still dispute it.
     ///         A default left undisputed past this window is a "silent default".
@@ -86,8 +91,10 @@ contract HandshakeRegistry {
                 client: client,
                 amountCents: amountCents,
                 deadline: deadline,
+                createdAt: uint64(block.timestamp),
                 cosignedAt: 0,
                 resolvedAt: 0,
+                disputedAt: 0,
                 scopeHash: scopeHash,
                 disputeHash: bytes32(0),
                 status: Status.Proposed
@@ -150,6 +157,7 @@ contract HandshakeRegistry {
         if (block.timestamp > uint256(a.resolvedAt) + DISPUTE_WINDOW) revert DisputeWindowClosed();
 
         a.status = Status.Disputed;
+        a.disputedAt = uint64(block.timestamp);
         a.disputeHash = reasonHash;
 
         emit DefaultDisputed(id, a.freelancer, a.client, reasonHash);
@@ -157,6 +165,22 @@ contract HandshakeRegistry {
 
     function getAgreement(uint256 id) external view returns (Agreement memory) {
         return _get(id);
+    }
+
+    /// @notice Batch read [fromId, toId) so reputation can be computed from
+    ///         state in one call — no log scans, no indexer.
+    function getAgreements(uint256 fromId, uint256 toId)
+        external
+        view
+        returns (Agreement[] memory page)
+    {
+        if (toId > _agreements.length) toId = _agreements.length;
+        if (fromId >= toId) return new Agreement[](0);
+
+        page = new Agreement[](toId - fromId);
+        for (uint256 i = fromId; i < toId; ++i) {
+            page[i - fromId] = _agreements[i];
+        }
     }
 
     function agreementCount() external view returns (uint256) {

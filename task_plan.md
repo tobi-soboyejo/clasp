@@ -28,6 +28,7 @@ Full requirements live in the project brief; this file tracks execution.
 ## Day 4 (Jul 16–17) — Screen 3 + FEATURE FREEZE
 
 - [ ] Screen 3: wallet lookup — reputation card (gigs, paid/defaulted/disputed, CAD volume, first-seen date + history depth), color-coded agreements table
+- [ ] Transparent grade on the reputation card: letter grade from a PUBLISHED formula, arithmetic shown under it (silent defaults weigh heaviest; shallow history discounts). No opaque scoring — v1 is deliberately auditable.
 - [ ] Events via viem `getLogs` — no indexer, no hardcoded data anywhere
 - [ ] **Feature freeze end of day**
 

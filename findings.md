@@ -50,3 +50,41 @@
 - Network: chain ID 10143, RPC https://testnet-rpc.monad.xyz (also
   rpc.testnet.monad.xyz per dev portal), explorers testnet.monadvision.com /
   testnet.monadscan.com.
+
+## 2026-07-13 — Day 3 (early start)
+
+### The getLogs wall → state-derived architecture (KEY DECISION)
+- Monad public RPC (and thirdweb's) limit `eth_getLogs` to a **100-block
+  range**; Ankr rejects large ranges too; dRPC free tier caps at 10k blocks
+  (~83 min of Monad blocks); Envio HyperRPC now requires an API token.
+  Event-scan-based reputation would need hundreds of chunked requests or a
+  third-party API key — both bad for judges cloning the repo.
+- Fix: contract v1.1 stores ALL lifecycle timestamps in the struct
+  (`createdAt`, `disputedAt` added) and exposes `getAgreements(from,to)`
+  batch view. Entire UI (timeline, reputation) derives from `eth_call` state
+  reads. Events still emitted for future indexers. 25 tests pass.
+- Redeployed + verified (Sourcify exact_match):
+  `0xbefa778FDb69FCD1F851801a5D5e8b8191C7929c`, deploy block 44691765,
+  tx `0x2f9ffadefb1dcb173148a0b691e28f65d6d3f68bfa7d7753d0107216aa3bae7b`.
+  Old address 0xe5d9…2411 abandoned (was pre-seed; only test data lost).
+- Timeline explorer links: per-action tx hashes recorded to localStorage at
+  write time (real hashes, no scanning); timestamps always shown from state.
+
+### Test data (real txs via scripts/seed.sh)
+- Test client wallet CLIENT1 `0x85D1927b2BBf1bB4C1b4D53ad011D83780c9C60b`
+  (key in contracts/.env), funded 0.5 MON from deployer.
+- Agreement #0 on v1.1: $1,850 CAD website gig, deadline Jul 18, created by
+  deployer (freelancer), co-signed by CLIENT1 → Active. Scope text recorded
+  in seed.sh (only its keccak hash is onchain).
+
+### Gotcha log
+- macOS SIP strips DYLD_* env vars when exec-ing shell scripts → seed.sh
+  exports DYLD_FALLBACK_LIBRARY_PATH itself.
+- npm cache ~/.npm partially root-owned (old sudo npm) → use --cache override
+  or fix ownership later.
+
+### Scope adjustments agreed with Tobi
+- Day 4 adds a TRANSPARENT grade to the lookup card (published formula,
+  arithmetic shown). No opaque scoring in v1.
+- README roadmap now frames the primitive as "any co-signed promise to pay"
+  (rent next, landlord-accountability-first, rehabilitation framing).

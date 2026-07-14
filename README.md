@@ -62,11 +62,17 @@ aggregate counters.
 
 | | |
 |---|---|
-| Contract | [`0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411`](https://testnet.monadvision.com/address/0xe5d9E4e899D0F04987de2E8f37e8FF7E9A2d2411) |
+| Contract | [`0xbefa778FDb69FCD1F851801a5D5e8b8191C7929c`](https://testnet.monadvision.com/address/0xbefa778FDb69FCD1F851801a5D5e8b8191C7929c) |
 | Chain ID | 10143 |
 | RPC | `https://testnet-rpc.monad.xyz` |
-| Deploy tx | `0x4b6eaedc0469c889375231f6223f2c42f84ca25940bcf0fa626a66c1dd935470` |
+| Deploy tx | `0x2f9ffadefb1dcb173148a0b691e28f65d6d3f68bfa7d7753d0107216aa3bae7b` |
 | Source verified | Sourcify (exact match) — readable on the explorer |
+
+Design note: Monad's public RPC caps `eth_getLogs` at a 100-block range, so
+the app never scans logs. The contract stores every lifecycle timestamp in
+its state and exposes a batch getter (`getAgreements`) — the whole UI,
+including reputation, is derived from plain `eth_call` reads. Events are
+still emitted for anyone who wants to index later.
 
 ## Run the tests
 
@@ -90,6 +96,19 @@ window, boundary conditions).
    the full text in localStorage. Roadmap: IPFS.
 3. **Cold start** — a registry's value grows with network size. Roadmap: embed
    as a reputation layer inside existing freelance platforms.
+
+## Roadmap
+
+Gig work is the wedge, not the boundary. The primitive here is **any
+co-signed promise to pay with a public outcome** — rent is the obvious next
+binding (rent history is the classic "invisible credit" problem, and every
+kept promise in this registry is credit rehabilitation for someone the
+bureaus can't see). The accountability direction matters: tenant-facing
+landlord history first, not landlord-facing tenant scores — punching up, not
+down. Longer term: a transparent scoring model (v1 deliberately publishes raw
+outcomes and shows its arithmetic), identity attestations and vouching for
+newcomers, and embedding as a reputation layer inside field-service and
+freelance platforms where these clients already live.
 
 ---
 

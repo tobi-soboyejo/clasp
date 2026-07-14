@@ -57,6 +57,7 @@ contract HandshakeRegistryTest is Test {
         assertEq(a.client, client);
         assertEq(a.amountCents, AMOUNT_CENTS);
         assertEq(a.deadline, deadline);
+        assertEq(a.createdAt, uint64(block.timestamp));
         assertEq(a.scopeHash, SCOPE_HASH);
         assertEq(registry.agreementCount(), 1);
 
@@ -117,6 +118,7 @@ contract HandshakeRegistryTest is Test {
         assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Disputed));
         assertEq(a.disputeHash, REASON_HASH);
         assertEq(a.resolvedAt, flaggedAt); // default-flag time is preserved
+        assertEq(a.disputedAt, uint64(block.timestamp));
     }
 
     function test_SilentDefault_WindowPassesUndisputed() public {
@@ -286,5 +288,25 @@ contract HandshakeRegistryTest is Test {
 
     function test_DisputeWindowIs14Days() public view {
         assertEq(registry.DISPUTE_WINDOW(), 14 days);
+    }
+
+    function test_GetAgreementsBatch() public {
+        _create();
+        vm.prank(freelancer);
+        registry.createAgreement(stranger, 50_000, deadline, SCOPE_HASH);
+        vm.prank(stranger);
+        registry.createAgreement(client, 75_000, deadline, SCOPE_HASH);
+
+        HandshakeRegistry.Agreement[] memory page = registry.getAgreements(0, 3);
+        assertEq(page.length, 3);
+        assertEq(page[0].client, client);
+        assertEq(page[1].client, stranger);
+        assertEq(page[2].freelancer, stranger);
+
+        // toId clamped to count; empty and inverted ranges return empty
+        assertEq(registry.getAgreements(1, 99).length, 2);
+        assertEq(registry.getAgreements(3, 3).length, 0);
+        assertEq(registry.getAgreements(2, 1).length, 0);
+        assertEq(registry.getAgreements(99, 100).length, 0);
     }
 }

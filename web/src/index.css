@@ -131,3 +131,214 @@ h1 {
   margin-top: 0.35rem;
   max-width: 22ch;
 }
+
+/* --- forms --- */
+
+.agreement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 480px;
+  margin: 1.5rem 0 2rem;
+}
+
+.agreement-form label,
+.action-box label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.agreement-form input,
+.agreement-form textarea,
+.action-box textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.agreement-form input:focus,
+.agreement-form textarea:focus,
+.action-box textarea:focus {
+  outline: 1px solid var(--accent);
+}
+
+.field-note {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  max-width: 46ch;
+}
+
+.form-hint {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  max-width: 60ch;
+  overflow-wrap: anywhere;
+}
+
+.connect-btn.danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.share-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  margin: 1.25rem 0;
+  flex-wrap: wrap;
+}
+
+.share-box code {
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+
+/* --- agreement detail --- */
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status-proposed { background: #2c2a45; color: #a9a3e0; }
+.status-active { background: #1e3230; color: #7fd4c1; }
+.status-paid { background: #1f3a24; color: #8ee08a; }
+.status-defaulted { background: #46201b; color: #f0907f; }
+.status-disputed { background: #453a1a; color: #e6c96e; }
+.status-expired { background: #2a2a2a; color: #9a9a9a; }
+
+.terms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.terms dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 0.2rem;
+}
+
+.terms dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.terms em {
+  color: var(--accent);
+  font-style: normal;
+  font-size: 0.85rem;
+}
+
+.scope-box h2,
+.action-box h2 {
+  font-size: 1rem;
+  color: var(--text);
+  margin: 1.25rem 0 0.4rem;
+}
+
+.scope-text {
+  white-space: pre-wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  max-width: 60ch;
+}
+
+.verify-ok { color: #8ee08a; font-size: 0.85rem; }
+.verify-bad { color: var(--danger); font-size: 0.85rem; }
+
+.action-box {
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 520px;
+}
+
+/* --- timeline --- */
+
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  border-left: 2px solid var(--border);
+}
+
+.timeline li {
+  padding: 0.4rem 0 0.4rem 1rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0.85rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.timeline-label { font-weight: 600; }
+.timeline-when { color: var(--text-dim); font-size: 0.85rem; }
+.timeline a { color: var(--accent); font-size: 0.85rem; }
+
+h2 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 2rem 0 0.5rem;
+}

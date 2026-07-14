@@ -37,7 +37,7 @@ Full requirements live in the project brief; this file tracks execution.
 - [ ] Design polish pass (deliberate direction — credit-bureau-meets-handshake; not AI slop)
 - [ ] Mobile responsive; everything fits in viewport
 - [ ] Deploy frontend to Vercel, live public URL
-- [ ] Seed demo data with REAL testnet txs from 2–3 wallets: paid, silent default, disputed outcomes; one short-deadline agreement for the live demo
+- [ ] Seed demo data with REAL testnet txs from 2–3 wallets: paid, silent default, disputed outcomes; one short-deadline agreement for the live demo; include one game-account-sale agreement (digital-deals use case)
 
 ## Day 6 (Jul 18–19) — Ship
 

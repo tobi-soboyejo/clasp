@@ -131,9 +131,10 @@ export function NewAgreement() {
     <section>
       <h1>Propose an agreement</h1>
       <p className="tagline">
-        The credit check for gig work: both parties sign the commitment
-        onchain before work starts — the outcome becomes permanent, public
-        history.
+        The credit check for gig work and digital deals: both parties sign
+        the commitment onchain before work starts — the outcome becomes
+        permanent, public history. Freelance jobs, game-account sales, any
+        promise to pay.
       </p>
 
       <form className="agreement-form" onSubmit={submit}>

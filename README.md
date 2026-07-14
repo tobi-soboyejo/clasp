@@ -97,18 +97,29 @@ window, boundary conditions).
 3. **Cold start** — a registry's value grows with network size. Roadmap: embed
    as a reputation layer inside existing freelance platforms.
 
+## Beyond gig work
+
+The primitive is **any co-signed promise to pay with a public outcome**, and
+it works today for more than freelance jobs. **Virtual-asset deals** — game
+accounts, items, boosting services — are gray markets full of pseudonymous
+strangers with zero recourse, and they map straight onto the registry
+(seller = payee, buyer = payer, scope describes the asset; a non-delivery
+disagreement surfaces through the dispute mechanic with both claims visible).
+Chinese courts recognizing game accounts as inheritable private property
+underlines that these assets are real economic property with real markets.
+
 ## Roadmap
 
-Gig work is the wedge, not the boundary. The primitive here is **any
-co-signed promise to pay with a public outcome** — rent is the obvious next
-binding (rent history is the classic "invisible credit" problem, and every
-kept promise in this registry is credit rehabilitation for someone the
-bureaus can't see). The accountability direction matters: tenant-facing
-landlord history first, not landlord-facing tenant scores — punching up, not
-down. Longer term: a transparent scoring model (v1 deliberately publishes raw
-outcomes and shows its arithmetic), identity attestations and vouching for
-newcomers, and embedding as a reputation layer inside field-service and
-freelance platforms where these clients already live.
+Rent is the next binding — rent history is the classic "invisible credit"
+problem, and every kept promise in this registry is credit rehabilitation
+for someone the bureaus can't see. The accountability direction matters:
+tenant-facing landlord history first, not landlord-facing tenant scores —
+punching up, not down. Also ahead: symmetric outcome flags (either party can
+flag non-performance — completes the virtual-asset story), a transparent
+scoring model (v1 deliberately publishes raw outcomes and shows its
+arithmetic), identity attestations and vouching for newcomers, and embedding
+as a reputation layer inside field-service and freelance platforms where
+these clients already live.
 
 ---
 

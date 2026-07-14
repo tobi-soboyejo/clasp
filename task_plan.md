@@ -30,14 +30,14 @@ Full requirements live in the project brief; this file tracks execution.
 - [x] Screen 3: wallet lookup — reputation card (gigs, paid/defaulted/disputed, CAD volume, first-seen date + history depth), color-coded agreements table
 - [x] Transparent grade on the reputation card: letter grade from a PUBLISHED formula, arithmetic shown under it (silent defaults weigh double; <3 concluded = provisional; window-open defaults ungraded). No opaque scoring — v1 is deliberately auditable. Formula in README.
 - [x] ~~Events via viem `getLogs`~~ → replaced by state-derived reads (Monad RPC caps getLogs at 100 blocks; see findings Day 3). No indexer, no hardcoded data anywhere.
-- [ ] **Feature freeze end of day** (pending: roadmap tie-in decision with Tobi)
+- [x] **Feature freeze** — locked with Tobi: Handshake Score v1.5 in, contract stays v1.1, symmetric flags stay v2
 
 ## Day 5 (Jul 17–18) — Polish + deploy + seed
 
-- [ ] Design polish pass (deliberate direction — credit-bureau-meets-handshake; not AI slop)
-- [ ] Mobile responsive; everything fits in viewport
+- [x] Design polish pass: Fraunces serif ledger headlines, footer, favicon, hover/focus states
+- [x] Mobile responsive verified (375px)
 - [ ] Deploy frontend to Vercel, live public URL
-- [ ] Seed demo data with REAL testnet txs from 2–3 wallets: paid, silent default, disputed outcomes; one short-deadline agreement for the live demo; include one game-account-sale agreement (digital-deals use case)
+- [x] Seed demo data with REAL testnet txs (scripts/seed-day5.sh): 4 wallets, 8 agreements — paid ×4, defaulted (window open), disputed, expired proposal, active; incl. game-account sale. (True *silent* default impossible before deadline: 14-day window > 6-day hackathon; defaults now score immediately — findings Day 5.)
 
 ## Day 6 (Jul 18–19) — Ship
 

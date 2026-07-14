@@ -10,9 +10,20 @@ import {
   formatTimestamp,
   statusClass,
 } from "../lib/agreements";
-import { computeReputation } from "../lib/reputation";
+import { computeReputation, type ScoredOutcome } from "../lib/reputation";
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
+
+const KIND_LABEL: Record<ScoredOutcome["kind"], string> = {
+  paid: "paid",
+  disputed: "disputed",
+  "default-window-open": "default (dispute window open)",
+  "silent-default": "silent default",
+};
+
+function scoreClass(band: string) {
+  return `band-${band.toLowerCase().replace(" ", "-")}`;
+}
 
 export function Lookup() {
   const { address: addressParam } = useParams();
@@ -25,6 +36,8 @@ export function Lookup() {
 
   const wallet =
     addressParam && isAddress(addressParam) ? addressParam : undefined;
+
+  const nowSec = BigInt(Math.floor(Date.now() / 1000));
 
   const rep = useMemo(() => {
     if (!wallet || !all) return undefined;
@@ -52,7 +65,7 @@ export function Lookup() {
     navigate(`/lookup/${input.trim()}`);
   }
 
-  const nowSec = BigInt(Math.floor(Date.now() / 1000));
+  const hs = rep?.handshakeScore;
 
   return (
     <section>
@@ -92,14 +105,20 @@ export function Lookup() {
       {isLoading && wallet && <p className="field-note">Reading the registry…</p>}
       {error && <p className="form-error">Couldn't reach Monad testnet.</p>}
 
-      {wallet && rep && (
+      {wallet && rep && hs && (
         <>
           <div className="rep-card">
             <div className="rep-head">
-              <AddressChip address={wallet} you={wallet.toLowerCase() === myAddress?.toLowerCase()} />
+              <AddressChip
+                address={wallet}
+                you={wallet.toLowerCase() === myAddress?.toLowerCase()}
+              />
               <span className="rep-first-seen">
                 {rep.firstSeen !== null ? (
-                  <>first seen {formatTimestamp(rep.firstSeen)} · {rep.concludedCount} concluded</>
+                  <>
+                    first seen {formatTimestamp(rep.firstSeen)} ·{" "}
+                    {hs.concluded} concluded
+                  </>
                 ) : (
                   "never seen in this registry"
                 )}
@@ -107,26 +126,39 @@ export function Lookup() {
             </div>
 
             <div className="rep-grade-row">
-              <div className={`rep-grade grade-${rep.grade.letter === "—" ? "none" : rep.grade.letter}`}>
-                {rep.grade.letter}
-                {rep.grade.provisional && <span className="rep-prov">provisional</span>}
+              <div className={`rep-score ${scoreClass(hs.band)}`}>
+                <span className="rep-score-num">{hs.score ?? "—"}</span>
+                <span className="rep-score-band">{hs.band}</span>
+                {hs.provisional && hs.score !== null && (
+                  <span className="rep-prov">provisional</span>
+                )}
               </div>
               <div className="rep-grade-math">
-                {rep.grade.pct === null ? (
+                {hs.score === null ? (
                   <>
                     <strong>No payment history as a client.</strong> Unknown
                     isn't bad — it's unknown. Like any brand-new counterparty:
                     start with a smaller scope or partial payment up front.
+                    Willingness to co-sign here is itself a first signal.
                   </>
                 ) : (
                   <>
-                    <strong>{Math.round(rep.grade.pct * 100)}%</strong> ={" "}
-                    {rep.asClient.paid} paid ×1 + {rep.asClient.disputed} disputed
-                    ×0.4 + {rep.asClient.silentDefaults} silent ×0, out of a
-                    weight of {rep.grade.weight} (silent defaults count double).
-                    Same formula for everyone, arithmetic shown — this registry
-                    doesn't do black boxes.
+                    <strong>Handshake Score {hs.score}</strong> ={" "}
+                    300 + {Math.round((hs.pct ?? 0) * 100)}% outcome credit ×{" "}
+                    {hs.diversityFactor.toFixed(2)} diversity × 550.{" "}
+                    {hs.uniqueCounterparties} unique counterpart
+                    {hs.uniqueCounterparties === 1 ? "y" : "ies"} across{" "}
+                    {hs.concluded} concluded. Defaults weigh double; big deals
+                    count more (capped); everything fades with a 1-year
+                    half-life. Same formula for everyone — arithmetic below.
                   </>
+                )}
+                {hs.recoveryStreak !== null && hs.recoveryStreak > 0 && (
+                  <p className="rep-trend">
+                    ↗ Recovering: {hs.recoveryStreak} consecutive paid since
+                    the last bad mark. Old marks fade — behavior now beats
+                    history.
+                  </p>
                 )}
               </div>
             </div>
@@ -136,31 +168,84 @@ export function Lookup() {
                 <span className="rep-num">✅ {rep.asClient.paid}</span> paid
               </div>
               <div>
-                <span className="rep-num">🔴 {rep.asClient.silentDefaults}</span> silent defaults
+                <span className="rep-num">🔴 {rep.asClient.silentDefaults}</span>{" "}
+                silent defaults
               </div>
-              <div>
-                <span className="rep-num">🟡 {rep.asClient.disputed}</span> disputed
-              </div>
-              {rep.asClient.pendingDefaults > 0 && (
+              {rep.asClient.windowOpenDefaults > 0 && (
                 <div>
-                  <span className="rep-num">⏳ {rep.asClient.pendingDefaults}</span> flagged, dispute window open
+                  <span className="rep-num">
+                    🔴 {rep.asClient.windowOpenDefaults}
+                  </span>{" "}
+                  defaulted, window open
                 </div>
               )}
               <div>
-                <span className="rep-num">{formatCad(rep.asClient.volumeCents)}</span> as client
+                <span className="rep-num">🟡 {rep.asClient.disputed}</span>{" "}
+                disputed
               </div>
               <div>
-                <span className="rep-num">{formatCad(rep.asFreelancer.volumeCents)}</span> as freelancer
-                ({rep.asFreelancer.total} gigs)
+                <span className="rep-num">{formatCad(rep.asClient.volumeCents)}</span>{" "}
+                as client
+              </div>
+              <div>
+                <span className="rep-num">
+                  {formatCad(rep.asFreelancer.volumeCents)}
+                </span>{" "}
+                as freelancer ({rep.asFreelancer.total} gigs)
               </div>
             </div>
+
+            {hs.outcomes.length > 0 && (
+              <details className="score-breakdown">
+                <summary>How this score is computed — every input</summary>
+                <div className="table-wrap">
+                  <table className="agreements-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Outcome</th>
+                        <th>Amount</th>
+                        <th>Credit</th>
+                        <th>Size ×</th>
+                        <th>Recency ×</th>
+                        <th>Weight ×</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hs.outcomes.map((o) => (
+                        <tr key={o.id.toString()}>
+                          <td>
+                            <Link to={`/agreement/${o.id}`}>
+                              #{o.id.toString()}
+                            </Link>
+                          </td>
+                          <td>{KIND_LABEL[o.kind]}</td>
+                          <td>{formatCad(o.amountCents)}</td>
+                          <td>{o.base}</td>
+                          <td>{o.sizeFactor.toFixed(2)}</td>
+                          <td>{o.recencyFactor.toFixed(2)}</td>
+                          <td>{o.weightMult}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="field-note">
+                  score = 300 + [Σ(credit·size·recency) / Σ(weight·size·recency)]
+                  × diversity × 550, where diversity = 0.6 + 0.4 × (unique
+                  counterparties ÷ concluded). Full spec in the README. No
+                  black boxes: same public data, same formula, for everyone.
+                </p>
+              </details>
+            )}
           </div>
 
           <h2>Agreements ({rows.length})</h2>
           {rows.length === 0 && (
             <p className="field-note">
               This wallet has never co-signed anything here. A blank record is
-              itself information.
+              itself information — and if someone refuses to co-sign at all,
+              that's your answer.
             </p>
           )}
           {rows.length > 0 && (
@@ -178,7 +263,8 @@ export function Lookup() {
                 </thead>
                 <tbody>
                   {rows.map(({ a, id }) => {
-                    const isClientRow = a.client.toLowerCase() === wallet.toLowerCase();
+                    const isClientRow =
+                      a.client.toLowerCase() === wallet.toLowerCase();
                     const label = displayStatus(a as AgreementData, nowSec);
                     return (
                       <tr key={id.toString()}>

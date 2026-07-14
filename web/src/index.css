@@ -1,4 +1,8 @@
-/* Interim base styles — the deliberate design pass lands Day 5. */
+/* Design direction: credit-bureau-meets-handshake — printed-ledger serif
+ * headlines over warm ink-and-paper darks, one gold accent, no gradients,
+ * no glassmorphism. The score tile is the only loud element on any page. */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap");
 
 :root {
   --bg: #14120f;
@@ -39,11 +43,17 @@ body {
 }
 
 .wordmark {
-  font-weight: 700;
-  font-size: 1.15rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 800;
+  font-size: 1.3rem;
   color: var(--accent);
   text-decoration: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+h1,
+.rep-score-num {
+  font-family: "Fraunces", Georgia, serif;
 }
 
 .app-header nav {
@@ -68,9 +78,56 @@ main {
 }
 
 h1 {
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   margin: 0 0 0.5rem;
   color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.app-footer {
+  margin-top: 4rem;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.app-footer a {
+  color: var(--text-dim);
+  text-decoration: underline;
+}
+
+.app-footer a:hover {
+  color: var(--accent);
+}
+
+.connect-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.agreements-table tbody tr:hover {
+  background: rgba(224, 176, 76, 0.04);
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .app-header nav {
+    order: 3;
+    width: 100%;
+  }
+  .rep-grade-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  main {
+    padding-top: 1.5rem;
+  }
 }
 
 .tagline {
@@ -510,4 +567,61 @@ h2 {
 
 .agreements-table a {
   color: var(--accent);
+}
+
+/* --- handshake score --- */
+
+.rep-score {
+  width: 108px;
+  min-height: 96px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  flex: none;
+  padding: 0.5rem 0;
+}
+
+.rep-score-num {
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.rep-score-band {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.band-excellent { background: #1f3a24; color: #8ee08a; }
+.band-good { background: #2c3a1f; color: #c4e08a; }
+.band-fair { background: #453a1a; color: #e6c96e; }
+.band-poor { background: #46301b; color: #f0b87f; }
+.band-bad { background: #46201b; color: #f0907f; }
+.band-no-history { background: #2a2a2a; color: #9a9a9a; }
+
+.rep-trend {
+  color: #8ee08a;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+.score-breakdown {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.score-breakdown summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.score-breakdown .agreements-table {
+  margin-bottom: 0.5rem;
 }

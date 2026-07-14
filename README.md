@@ -97,24 +97,37 @@ window, boundary conditions).
 3. **Cold start** — a registry's value grows with network size. Roadmap: embed
    as a reputation layer inside existing freelance platforms.
 
-## The grade is not a black box
+## The Handshake Score is not a black box
 
-The lookup screen shows a letter grade computed client-side from onchain
-outcomes, with the arithmetic printed next to it:
+The lookup screen shows a 300–850 score computed client-side from public
+onchain state, with every input printed on the card. On a public chain an
+opaque score would be a pretense — anyone can recompute anything — so
+transparency is the product. The data is the permanent record; the score is
+a published, contestable lens over it. Disagree with the weights? Fork the
+lens; the record stays.
 
 ```
-points = paid×1 + disputed×0.4 + silentDefault×0
-weight = paid   + disputed     + silentDefault×2
-grade  = points / weight   →   A ≥90% · B ≥75% · C ≥55% · D ≥35% · F below
+per concluded agreement (as the paying party):
+  credit   paid = 1 · disputed = 0.4 · defaulted = 0
+  weight   defaults ×2 (disputing restores partial credit via 0.4)
+  size     amount/$500, clamped [0.25, 3]  — big deals matter, tiny gigs can't pad
+  recency  ½^(age in years)               — 1-year half-life; rehab is arithmetic
+
+pct       = Σ(credit·size·recency) / Σ(weight·size·recency)
+diversity = 0.6 + 0.4 × (unique counterparties ÷ concluded)  — 10 deals with
+            10 people ≠ 10 deals with 1 (anti wash-trading)
+score     = 300 + pct × diversity × 550
+            750+ Excellent · 650+ Good · 550+ Fair · 450+ Poor · below Bad
 ```
 
-Silent defaults (ignoring a default flag for the whole 14-day window) weigh
-double — silence is the worst signal. Disputed outcomes get partial credit:
-the registry never rules on who's right. Fewer than three concluded
-agreements marks a grade *provisional*; defaults whose dispute window is
-still open aren't graded at all yet. A wallet with no history shows "—",
-deliberately framed as *unknown, not bad* — the UI suggests treating
-newcomers like any new counterparty (smaller first scope, partial upfront).
+Each factor exists to kill a specific attack, and each limitation is stated:
+the score can't stop a patient Sybil ring, can't measure work quality, and
+only scores what was signed. Defaults count the moment they're flagged (the
+registry warns the *next* person now; a dispute restores partial credit the
+moment it lands). Under three concluded outcomes the score is provisional.
+No history shows "—", deliberately framed as *unknown, not bad*. When a
+wallet with old bad marks builds a paid streak, the card says so — recency
+decay makes rehabilitation a property of the math, not a promise.
 
 ## Beyond gig work
 

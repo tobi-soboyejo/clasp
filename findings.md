@@ -105,3 +105,15 @@
   Prepr trust signal someday. Pattern kinship: glass-box scoring ↔ Prepr's
   consent-first/member-owned data stance. Log to Prepr vault NOTES-FOR-LATER
   in a Prepr session; no code bridge now.
+
+## 2026-07-13 — Day 5 decision: defaults score immediately
+
+- Reversal of the Day-4 "window-open defaults ungraded" rule. Reasons:
+  (1) product: the registry exists to warn the NEXT counterparty now, not
+  after a 14-day grace; the client's remedy is dispute, which restores
+  partial credit instantly. Mirrors real credit reporting.
+  (2) practical: testnet time can't be warped — a default flagged this week
+  is inside its window until after the submission deadline, so the old rule
+  made the demo's red mark invisible to the score on judging day.
+- UI still distinguishes "default — dispute window open until <date>" from
+  "silent default" (window lapsed). Same score weight; different label.

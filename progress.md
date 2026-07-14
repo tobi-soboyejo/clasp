@@ -48,3 +48,15 @@
 - ✅ Verified in browser: CLIENT1 lookup shows A (provisional), 100% math,
   $3,650 volume, Paid + Active rows — all from getAgreements state reads
 - ⏳ Feature freeze pending roadmap tie-in decision
+
+## Day 5 — 2026-07-13/14 (early start)
+
+- ✅ Handshake Score v1.5 live: 300–850, size/recency/diversity factors,
+  recovery streak, full per-agreement breakdown table on the card
+- ✅ Defaults score immediately (decision logged in findings)
+- ✅ Seeded full demo dataset: 8 agreements, 4 wallets, every outcome type,
+  all real txs — bad client scores 419 (Bad), good client 777 (Excellent)
+- ✅ Design pass: Fraunces ledger serif, footer, favicon, hover states,
+  mobile verified at 375px
+- ⏳ Remaining Day 5: deploy to Vercel (needs Tobi's login), rehab streak
+  will display once a mixed history exists post-dispute-window

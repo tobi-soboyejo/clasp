@@ -1,4 +1,5 @@
 import { Link, NavLink, Route, Routes } from "react-router-dom";
+import { EXPLORER_URL, HANDSHAKE_ADDRESS } from "./lib/config";
 import { ConnectButton } from "./components/ConnectButton";
 import { NewAgreement } from "./screens/NewAgreement";
 import { AgreementDetail } from "./screens/AgreementDetail";
@@ -25,6 +26,23 @@ export default function App() {
           <Route path="/lookup/:address" element={<Lookup />} />
         </Routes>
       </main>
+      <footer className="app-footer">
+        <span>A registry, not an escrow — no funds ever move onchain.</span>
+        <a
+          href={`${EXPLORER_URL}/address/${HANDSHAKE_ADDRESS}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Contract on Monad testnet
+        </a>
+        <a
+          href="https://github.com/tobi-soboyejo/handshake"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Source
+        </a>
+      </footer>
     </div>
   );
 }

@@ -22,6 +22,7 @@ export default function App() {
           <Route path="/" element={<NewAgreement />} />
           <Route path="/agreement/:id" element={<AgreementDetail />} />
           <Route path="/lookup" element={<Lookup />} />
+          <Route path="/lookup/:address" element={<Lookup />} />
         </Routes>
       </main>
     </div>

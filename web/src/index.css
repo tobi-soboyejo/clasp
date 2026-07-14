@@ -380,3 +380,134 @@ h2 {
 .addr-rename:hover {
   color: var(--accent);
 }
+
+/* --- lookup / reputation --- */
+
+.lookup-form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin: 1.25rem 0;
+  flex-wrap: wrap;
+}
+
+.lookup-form input {
+  flex: 1;
+  min-width: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.6rem 0.75rem;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.9rem;
+}
+
+.lookup-form .link-btn {
+  margin-top: 0;
+}
+
+.rep-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.rep-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.rep-first-seen {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.rep-grade-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.rep-grade {
+  font-size: 2.6rem;
+  font-weight: 800;
+  width: 84px;
+  height: 84px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.grade-A { background: #1f3a24; color: #8ee08a; }
+.grade-B { background: #2c3a1f; color: #c4e08a; }
+.grade-C { background: #453a1a; color: #e6c96e; }
+.grade-D { background: #46301b; color: #f0b87f; }
+.grade-F { background: #46201b; color: #f0907f; }
+.grade-none { background: #2a2a2a; color: #9a9a9a; }
+
+.rep-prov {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rep-grade-math {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  max-width: 52ch;
+}
+
+.rep-stats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.rep-num {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.agreements-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 0.75rem 0 2rem;
+}
+
+.agreements-table th {
+  text-align: left;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.agreements-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.agreements-table a {
+  color: var(--accent);
+}

@@ -97,6 +97,25 @@ window, boundary conditions).
 3. **Cold start** — a registry's value grows with network size. Roadmap: embed
    as a reputation layer inside existing freelance platforms.
 
+## The grade is not a black box
+
+The lookup screen shows a letter grade computed client-side from onchain
+outcomes, with the arithmetic printed next to it:
+
+```
+points = paid×1 + disputed×0.4 + silentDefault×0
+weight = paid   + disputed     + silentDefault×2
+grade  = points / weight   →   A ≥90% · B ≥75% · C ≥55% · D ≥35% · F below
+```
+
+Silent defaults (ignoring a default flag for the whole 14-day window) weigh
+double — silence is the worst signal. Disputed outcomes get partial credit:
+the registry never rules on who's right. Fewer than three concluded
+agreements marks a grade *provisional*; defaults whose dispute window is
+still open aren't graded at all yet. A wallet with no history shows "—",
+deliberately framed as *unknown, not bad* — the UI suggests treating
+newcomers like any new counterparty (smaller first scope, partial upfront).
+
 ## Beyond gig work
 
 The primitive is **any co-signed promise to pay with a public outcome**, and

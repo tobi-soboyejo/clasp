@@ -27,10 +27,10 @@ Full requirements live in the project brief; this file tracks execution.
 
 ## Day 4 (Jul 16–17) — Screen 3 + FEATURE FREEZE
 
-- [ ] Screen 3: wallet lookup — reputation card (gigs, paid/defaulted/disputed, CAD volume, first-seen date + history depth), color-coded agreements table
-- [ ] Transparent grade on the reputation card: letter grade from a PUBLISHED formula, arithmetic shown under it (silent defaults weigh heaviest; shallow history discounts). No opaque scoring — v1 is deliberately auditable.
-- [ ] Events via viem `getLogs` — no indexer, no hardcoded data anywhere
-- [ ] **Feature freeze end of day**
+- [x] Screen 3: wallet lookup — reputation card (gigs, paid/defaulted/disputed, CAD volume, first-seen date + history depth), color-coded agreements table
+- [x] Transparent grade on the reputation card: letter grade from a PUBLISHED formula, arithmetic shown under it (silent defaults weigh double; <3 concluded = provisional; window-open defaults ungraded). No opaque scoring — v1 is deliberately auditable. Formula in README.
+- [x] ~~Events via viem `getLogs`~~ → replaced by state-derived reads (Monad RPC caps getLogs at 100 blocks; see findings Day 3). No indexer, no hardcoded data anywhere.
+- [ ] **Feature freeze end of day** (pending: roadmap tie-in decision with Tobi)
 
 ## Day 5 (Jul 17–18) — Polish + deploy + seed
 

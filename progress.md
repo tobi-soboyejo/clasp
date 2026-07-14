@@ -36,3 +36,15 @@
   verified rendering live chain data in browser
 - ⏳ Next: cosign/confirm click-through with MetaMask (needs Tobi), then
   Day 4: lookup screen + transparent grade
+
+## Day 4 — 2026-07-13 (early start)
+
+- ✅ Agreement #0 concluded (confirmPaid from CLIENT1) — first real Paid outcome
+- ✅ Screen 3 (Lookup): reputation card with transparent grade (formula in
+  README + printed in UI), paid/silent/disputed counts, pending-window bucket,
+  CAD volume both roles, first-seen + history depth, color-coded table
+- ✅ Human-friendly wallets: local nicknames (petnames), identicon dots,
+  jargon pass ("gets paid / pays", "account number" framing)
+- ✅ Verified in browser: CLIENT1 lookup shows A (provisional), 100% math,
+  $3,650 volume, Paid + Active rows — all from getAgreements state reads
+- ⏳ Feature freeze pending roadmap tie-in decision

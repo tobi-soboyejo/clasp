@@ -117,3 +117,13 @@
   made the demo's red mark invisible to the score on judging day.
 - UI still distinguishes "default — dispute window open until <date>" from
   "silent default" (window lapsed). Same score weight; different label.
+
+### Deploy (Day 5 close)
+- Vercel account verified personal (`tobi-vercel-personal`, team
+  websitetobi-8765s-projects — no Lodestar team in this login).
+- Project `handshake`, prod URL https://handshake-wine.vercel.app.
+  vercel.json rewrites all paths to index.html so shareable
+  /agreement/:id and /lookup/:address links work.
+- Demo wallets recap: CLIENT2 (bad) 0x506e27e3056df5d75810c753999af2A71F791D5d
+  scores 419; CLIENT1 (good) 0x85D1927b2BBf1bB4C1b4D53ad011D83780c9C60b
+  scores 777; FREEL2 0x568cBFAF15045Af08946fC65E62f5A6bC2Af64E1.

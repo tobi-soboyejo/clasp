@@ -60,3 +60,6 @@
   mobile verified at 375px
 - ⏳ Remaining Day 5: deploy to Vercel (needs Tobi's login), rehab streak
   will display once a mixed history exists post-dispute-window
+- ✅ LIVE on Vercel: https://handshake-wine.vercel.app — verified from the
+  public URL incl. deep link to the bad client's report card (reads Monad
+  testnet directly from the browser). Day 5 complete.

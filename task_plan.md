@@ -36,7 +36,7 @@ Full requirements live in the project brief; this file tracks execution.
 
 - [x] Design polish pass: Fraunces serif ledger headlines, footer, favicon, hover/focus states
 - [x] Mobile responsive verified (375px)
-- [ ] Deploy frontend to Vercel, live public URL
+- [x] Deploy frontend to Vercel — LIVE: https://handshake-wine.vercel.app (personal account tobi-vercel-personal, project 'handshake', SPA rewrites for /agreement/:id links)
 - [x] Seed demo data with REAL testnet txs (scripts/seed-day5.sh): 4 wallets, 8 agreements — paid ×4, defaulted (window open), disputed, expired proposal, active; incl. game-account sale. (True *silent* default impossible before deadline: 14-day window > 6-day hackathon; defaults now score immediately — findings Day 5.)
 
 ## Day 6 (Jul 18–19) — Ship

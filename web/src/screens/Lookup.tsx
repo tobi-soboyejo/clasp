@@ -12,7 +12,12 @@ import {
 } from "../lib/agreements";
 import { shortAddress } from "../lib/agreements";
 import { HANDSHAKE_ADDRESS } from "../lib/config";
-import { computeReputation, type ScoredOutcome } from "../lib/reputation";
+import {
+  computeReputation,
+  computeWorkerRecord,
+  type ScoredOutcome,
+} from "../lib/reputation";
+
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
 
@@ -207,22 +212,26 @@ export function Lookup() {
 
             <div className="rep-stats">
               <div>
-                <span className="rep-num">✅ {rep.asClient.paid}</span> paid
+                <span className="pip pip-ok" />
+                <span className="rep-num">{rep.asClient.paid}</span> paid
               </div>
               <div>
-                <span className="rep-num">🔴 {rep.asClient.silentDefaults}</span>{" "}
+                <span className="pip pip-bad" />
+                <span className="rep-num">{rep.asClient.silentDefaults}</span>{" "}
                 silent defaults
               </div>
               {rep.asClient.windowOpenDefaults > 0 && (
                 <div>
+                  <span className="pip pip-bad" />
                   <span className="rep-num">
-                    🔴 {rep.asClient.windowOpenDefaults}
+                    {rep.asClient.windowOpenDefaults}
                   </span>{" "}
                   defaulted, window open
                 </div>
               )}
               <div>
-                <span className="rep-num">🟡 {rep.asClient.disputed}</span>{" "}
+                <span className="pip pip-warn" />
+                <span className="rep-num">{rep.asClient.disputed}</span>{" "}
                 disputed
               </div>
               <div>
@@ -282,6 +291,52 @@ export function Lookup() {
             )}
             </div>
           </div>
+
+          {(() => {
+            const wr = computeWorkerRecord(wallet, all!, nowSec);
+            if (wr.gigsCosigned === 0) return null;
+            return (
+              <div className="worker-card">
+                <div className="worker-title">
+                  Vetting lens — this wallet as a worker
+                </div>
+                <div className="rep-stats" style={{ borderTop: "none", paddingTop: 0 }}>
+                  <div>
+                    <span className="pip pip-ok" />
+                    <span className="rep-num">{wr.completedPaid}</span> gigs
+                    delivered &amp; paid
+                  </div>
+                  <div>
+                    <span className="rep-num">{formatCad(wr.earnedCents)}</span>{" "}
+                    earned
+                  </div>
+                  <div>
+                    <span className="pip pip-warn" />
+                    <span className="rep-num">{wr.disputes}</span> contested
+                  </div>
+                  <div>
+                    <span className="pip pip-dim" />
+                    <span className="rep-num">{wr.activeLoad}</span> active now
+                  </div>
+                  <div>
+                    <span className="rep-num">
+                      {wr.rehires}/{wr.uniqueClients}
+                    </span>{" "}
+                    clients rehired them
+                  </div>
+                </div>
+                <p className="field-note" style={{ marginTop: "0.7rem" }}>
+                  For companies and contractors: payment outcomes double as
+                  delivery evidence — a client confirming payment is a client
+                  who accepted the work. The rehire count is the signal that
+                  can't be faked cheaply: the same client co-signing with the
+                  same worker again. ({wr.defaultsSuffered} time
+                  {wr.defaultsSuffered === 1 ? "" : "s"} a client defaulted on
+                  them — that mark belongs to the client, not the worker.)
+                </p>
+              </div>
+            );
+          })()}
 
           <h2>Agreements ({rows.length})</h2>
           {rows.length === 0 && (

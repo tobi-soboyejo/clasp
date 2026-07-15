@@ -254,3 +254,70 @@ export function computeReputation(
     handshakeScore: computeScore(asClientRows, nowSec),
   };
 }
+
+/** The vetting lens for companies/contractors: this wallet AS A WORKER.
+ *  The registry records payment outcomes, so worker quality is read through
+ *  its strongest available proxies: gigs a client confirmed paying for
+ *  (delivered work), earnings, disputes they were party to, current load —
+ *  and rehire rate, the one signal money can't fake: the same client
+ *  co-signing with the same worker again. */
+export interface WorkerRecord {
+  gigsCosigned: number;
+  completedPaid: number;
+  earnedCents: bigint;
+  disputes: number; // concluded engagements that ended contested
+  defaultsSuffered: number; // times their client defaulted on them
+  activeLoad: number;
+  uniqueClients: number;
+  rehires: number; // clients who came back for 2+ co-signed gigs
+  firstSeen: bigint | null;
+}
+
+export function computeWorkerRecord(
+  wallet: string,
+  all: readonly AgreementData[],
+  nowSec: bigint,
+): WorkerRecord {
+  const w = wallet.toLowerCase();
+  const rows = all.filter(
+    (a) => a.freelancer.toLowerCase() === w && a.cosignedAt > 0n,
+  );
+
+  let completedPaid = 0,
+    disputes = 0,
+    defaultsSuffered = 0,
+    activeLoad = 0;
+  let earnedCents = 0n;
+  const clientCounts = new Map<string, number>();
+
+  for (const a of rows) {
+    const c = a.client.toLowerCase();
+    clientCounts.set(c, (clientCounts.get(c) ?? 0) + 1);
+    if (a.status === Status.Paid) {
+      completedPaid++;
+      earnedCents += a.amountCents;
+    } else if (a.status === Status.Disputed) disputes++;
+    else if (a.status === Status.Defaulted) defaultsSuffered++;
+    else if (a.status === Status.Active) {
+      if (nowSec <= a.deadline) activeLoad++;
+      else activeLoad++; // past-deadline active still open exposure
+    }
+  }
+
+  const rehires = [...clientCounts.values()].filter((n) => n >= 2).length;
+  const firstSeen = rows.length
+    ? rows.reduce((m, a) => (a.createdAt < m ? a.createdAt : m), rows[0].createdAt)
+    : null;
+
+  return {
+    gigsCosigned: rows.length,
+    completedPaid,
+    earnedCents,
+    disputes,
+    defaultsSuffered,
+    activeLoad,
+    uniqueClients: clientCounts.size,
+    rehires,
+    firstSeen,
+  };
+}

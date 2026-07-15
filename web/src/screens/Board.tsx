@@ -10,7 +10,7 @@ import { monadTestnet } from "wagmi/chains";
 import { boardAbi } from "../lib/abi-board";
 import { BOARD_ADDRESS } from "../lib/config";
 import { formatCad, formatTimestamp } from "../lib/agreements";
-import { computeReputation } from "../lib/reputation";
+import { computeReputation, computeWorkerRecord } from "../lib/reputation";
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
 
@@ -24,18 +24,46 @@ interface ListingData {
   active: boolean;
 }
 
-function ScoreChip({ wallet }: { wallet: string }) {
+/** Hiring listings show the poster's payer score; offering-work listings
+ *  show their delivery track record — each side vetted on what matters. */
+function ScoreChip({ wallet, kind }: { wallet: string; kind: number }) {
   const { data: all } = useAllAgreements();
   if (!all) return null;
-  const hs = computeReputation(
-    wallet,
-    all,
-    BigInt(Math.floor(Date.now() / 1000)),
-  ).handshakeScore;
+  const nowSec = BigInt(Math.floor(Date.now() / 1000));
+
+  if (kind === 0) {
+    const wr = computeWorkerRecord(wallet, all, nowSec);
+    if (wr.gigsCosigned === 0) {
+      return (
+        <Link to={`/lookup/${wallet}`} className="score-chip band-no-history">
+          new to registry
+        </Link>
+      );
+    }
+    return (
+      <Link
+        to={`/lookup/${wallet}`}
+        className="score-chip band-good"
+        title="Open work record"
+      >
+        {wr.completedPaid} paid gig{wr.completedPaid === 1 ? "" : "s"} ·{" "}
+        {formatCad(wr.earnedCents)} earned
+      </Link>
+    );
+  }
+
+  const hs = computeReputation(wallet, all, nowSec).handshakeScore;
   const cls = `score-chip band-${hs.band.toLowerCase().replace(" ", "-")}`;
   return (
     <Link to={`/lookup/${wallet}`} className={cls} title="Open payment history">
-      {hs.score === null ? "no history" : `⬤ ${hs.score} · ${hs.band}`}
+      {hs.score === null ? (
+        "no payment history"
+      ) : (
+        <>
+          <span className="pip" style={{ animation: "none", marginRight: "0.35rem" }} />
+          {hs.score} · {hs.band}
+        </>
+      )}
     </Link>
   );
 }
@@ -208,7 +236,7 @@ export function Board() {
                 address={l.poster}
                 you={l.poster.toLowerCase() === address?.toLowerCase()}
               />
-              <ScoreChip wallet={l.poster} />
+              <ScoreChip wallet={l.poster} kind={l.kind} />
               <span>{l.rateCents > 0n ? formatCad(l.rateCents) : "rate negotiable"}</span>
               <span>{formatTimestamp(l.postedAt)}</span>
             </div>

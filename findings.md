@@ -146,3 +146,17 @@
    wears its 419). Registry contract untouched — still frozen at v1.1.
    3 listings seeded with real txs.
 6. Removed the banknote-edge yellow strip.
+
+## 2026-07-14 — feedback round 2 (Tobi)
+
+- Emoji stat markers → bordered "pips" (colored outline squares, soft pulse,
+  reduced-motion safe). Emoji in UI = slop signal, agreed.
+- Score stamp → dark slab with breathing ambient glow in band color
+  (Vercel-button reference). Count-up kept.
+- Type system → Geist + Geist Mono (Vercel). Wordmark/headers/body one family.
+- Vetting lens (Jobber story): computeWorkerRecord() — gigs delivered+paid,
+  earned, contested, active load, REHIRE RATE (same client co-signing again =
+  the unfakeable quality signal), defaults-suffered attributed to the client
+  not the worker. Card on lookup; board chips now role-aware (hiring →
+  payer score, offering work → delivery record).
+- Score v2 discussion pending (punctuality, exposure, etc.) — proposal sent.

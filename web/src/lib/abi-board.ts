@@ -16,6 +16,19 @@ export const boardAbi = [
   },
   {
     "type": "function",
+    "name": "MAX_LINK_BYTES",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "MAX_TITLE_BYTES",
     "inputs": [],
     "outputs": [
@@ -72,12 +85,22 @@ export const boardAbi = [
             "internalType": "enum HandshakeBoard.Kind"
           },
           {
+            "name": "category",
+            "type": "uint8",
+            "internalType": "enum HandshakeBoard.Category"
+          },
+          {
             "name": "title",
             "type": "string",
             "internalType": "string"
           },
           {
             "name": "details",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "link",
             "type": "string",
             "internalType": "string"
           },
@@ -124,12 +147,22 @@ export const boardAbi = [
         "internalType": "enum HandshakeBoard.Kind"
       },
       {
+        "name": "category",
+        "type": "uint8",
+        "internalType": "enum HandshakeBoard.Category"
+      },
+      {
         "name": "title",
         "type": "string",
         "internalType": "string"
       },
       {
         "name": "details",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "link",
         "type": "string",
         "internalType": "string"
       },
@@ -211,6 +244,11 @@ export const boardAbi = [
   {
     "type": "error",
     "name": "EmptyTitle",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LinkTooLong",
     "inputs": []
   },
   {

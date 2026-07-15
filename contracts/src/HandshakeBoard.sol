@@ -11,15 +11,27 @@ pragma solidity ^0.8.24;
 ///         history and Handshake Score in the registry.
 contract HandshakeBoard {
     enum Kind {
-        OfferingWork, // freelancer looking for clients
-        Hiring // client looking for freelancers
+        Offering, // selling services, goods, availability
+        Seeking // buying, hiring, requesting
+    }
+
+    /// Broad on purpose: the promise-to-pay primitive isn't gig-only.
+    enum Category {
+        Services,
+        TradesAndField,
+        CreativeAndDigital,
+        GoodsAndGaming,
+        RentalsAndProperty,
+        Other
     }
 
     struct Listing {
         address poster;
         Kind kind;
+        Category category;
         string title;
         string details;
+        string link; // optional work/portfolio/evidence URL
         uint256 rateCents; // CAD cents, informational (0 = negotiable)
         uint64 postedAt;
         bool active;
@@ -27,6 +39,7 @@ contract HandshakeBoard {
 
     uint256 public constant MAX_TITLE_BYTES = 80;
     uint256 public constant MAX_DETAILS_BYTES = 400;
+    uint256 public constant MAX_LINK_BYTES = 200;
 
     Listing[] private _listings;
 
@@ -41,22 +54,30 @@ contract HandshakeBoard {
     error EmptyTitle();
     error TitleTooLong();
     error DetailsTooLong();
+    error LinkTooLong();
 
-    function post(Kind kind, string calldata title, string calldata details, uint256 rateCents)
-        external
-        returns (uint256 id)
-    {
+    function post(
+        Kind kind,
+        Category category,
+        string calldata title,
+        string calldata details,
+        string calldata link,
+        uint256 rateCents
+    ) external returns (uint256 id) {
         if (bytes(title).length == 0) revert EmptyTitle();
         if (bytes(title).length > MAX_TITLE_BYTES) revert TitleTooLong();
         if (bytes(details).length > MAX_DETAILS_BYTES) revert DetailsTooLong();
+        if (bytes(link).length > MAX_LINK_BYTES) revert LinkTooLong();
 
         id = _listings.length;
         _listings.push(
             Listing({
                 poster: msg.sender,
                 kind: kind,
+                category: category,
                 title: title,
                 details: details,
+                link: link,
                 rateCents: rateCents,
                 postedAt: uint64(block.timestamp),
                 active: true

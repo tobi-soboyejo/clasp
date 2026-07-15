@@ -11,7 +11,9 @@ import {
   statusClass,
 } from "../lib/agreements";
 import { shortAddress } from "../lib/agreements";
-import { HANDSHAKE_ADDRESS } from "../lib/config";
+import { HANDSHAKE_ADDRESS, BOARD_ADDRESS } from "../lib/config";
+import { boardAbi } from "../lib/abi-board";
+import { useReadContract } from "wagmi";
 import {
   computeReputation,
   computeWorkerRecord,
@@ -27,6 +29,49 @@ const KIND_LABEL: Record<ScoredOutcome["kind"], string> = {
   "default-window-open": "default (dispute window open)",
   "silent-default": "silent default",
 };
+
+/** Work links this wallet attached to its board listings — portfolio URLs,
+ *  screenshots of items for sale, past jobs. Image URLs render as previews. */
+const IMG_RE = /\.(png|jpe?g|webp|gif|avif)(\?|$)/i;
+
+function WorkLinks({ wallet }: { wallet: string }) {
+  const { data } = useReadContract({
+    address: BOARD_ADDRESS,
+    abi: boardAbi,
+    functionName: "getListings",
+    args: [0n, 1_000_000n],
+  });
+  const listings = (data as
+    | readonly { poster: string; link: string; title: string; active: boolean }[]
+    | undefined) ?? [];
+  const links = listings.filter(
+    (l) =>
+      l.active && l.link && l.poster.toLowerCase() === wallet.toLowerCase(),
+  );
+  if (links.length === 0) return null;
+  return (
+    <div className="work-links">
+      {links.map((l, i) =>
+        IMG_RE.test(l.link) ? (
+          <a key={i} href={l.link} target="_blank" rel="noreferrer" title={l.title}>
+            <img src={l.link} alt={l.title} loading="lazy" />
+          </a>
+        ) : (
+          <a
+            key={i}
+            className="work-link-card"
+            href={l.link}
+            target="_blank"
+            rel="noreferrer"
+            title={l.title}
+          >
+            {l.link.replace(/^https?:\/\//, "")}
+          </a>
+        ),
+      )}
+    </div>
+  );
+}
 
 function scoreClass(band: string) {
   return `band-${band.toLowerCase().replace(" ", "-")}`;
@@ -183,29 +228,63 @@ export function Lookup() {
               <div className="rep-grade-math">
                 {hs.score === null ? (
                   <>
-                    <strong>No payment history as a client.</strong> Unknown
-                    isn't bad — it's unknown. Like any brand-new counterparty:
-                    start with a smaller scope or partial payment up front.
-                    Willingness to co-sign here is itself a first signal.
+                    <strong className="verdict">
+                      No payment history as a payer.
+                    </strong>
+                    <p className="verdict-line">
+                      Unknown isn't bad — it's unknown. Treat them like any
+                      new counterparty: smaller first scope, partial payment
+                      up front. Willingness to co-sign is itself a first
+                      signal.
+                    </p>
                   </>
                 ) : (
                   <>
-                    <strong>Handshake Score {hs.score}</strong> ={" "}
-                    300 + {Math.round((hs.pct ?? 0) * 100)}% outcome credit ×{" "}
-                    {hs.diversityFactor.toFixed(2)} diversity × 550.{" "}
-                    {hs.uniqueCounterparties} unique counterpart
-                    {hs.uniqueCounterparties === 1 ? "y" : "ies"} across{" "}
-                    {hs.concluded} concluded. Defaults weigh double; big deals
-                    count more (capped); everything fades with a 1-year
-                    half-life. Same formula for everyone — arithmetic below.
+                    <strong className="verdict">
+                      {hs.band === "Excellent" && "Pays, on time, consistently."}
+                      {hs.band === "Good" && "Solid payment record."}
+                      {hs.band === "Fair" && "Mixed record — set clear terms."}
+                      {hs.band === "Poor" && "Elevated risk. Protect yourself."}
+                      {hs.band === "Bad" && "High risk of non-payment."}
+                    </strong>
+                    <ul className="verdict-facts">
+                      {hs.paidCount > 0 && (
+                        <li>
+                          Paid on time {hs.onTimeCount} of {hs.paidCount}{" "}
+                          confirmed deals.
+                        </li>
+                      )}
+                      {(rep.asClient.windowOpenDefaults > 0 ||
+                        rep.asClient.silentDefaults > 0) && (
+                        <li>
+                          {rep.asClient.silentDefaults + rep.asClient.windowOpenDefaults}{" "}
+                          default
+                          {rep.asClient.silentDefaults + rep.asClient.windowOpenDefaults === 1
+                            ? ""
+                            : "s"}{" "}
+                          on record
+                          {rep.asClient.windowOpenDefaults > 0 &&
+                            " — dispute window still open on the latest"}
+                          .
+                        </li>
+                      )}
+                      {hs.openVolumeCents > 0n && (
+                        <li>
+                          {formatCad(hs.openVolumeCents)} in open commitments
+                          vs {formatCad(hs.paidVolumeCents)} ever paid
+                          {hs.exposurePenalty > 0 &&
+                            ` — over-extended, −${hs.exposurePenalty} pts`}
+                          .
+                        </li>
+                      )}
+                      {hs.recoveryStreak !== null && hs.recoveryStreak > 0 && (
+                        <li className="rep-trend">
+                          Recovering: {hs.recoveryStreak} consecutive paid
+                          since the last bad mark.
+                        </li>
+                      )}
+                    </ul>
                   </>
-                )}
-                {hs.recoveryStreak !== null && hs.recoveryStreak > 0 && (
-                  <p className="rep-trend">
-                    ↗ Recovering: {hs.recoveryStreak} consecutive paid since
-                    the last bad mark. Old marks fade — behavior now beats
-                    history.
-                  </p>
                 )}
               </div>
             </div>
@@ -249,6 +328,18 @@ export function Lookup() {
             {hs.outcomes.length > 0 && (
               <details className="score-breakdown">
                 <summary>How this score is computed — every input</summary>
+                <p className="field-note" style={{ margin: "0.6rem 0" }}>
+                  <strong>Handshake Score {hs.score}</strong> = 300 +{" "}
+                  {Math.round((hs.pct ?? 0) * 100)}% outcome credit ×{" "}
+                  {hs.diversityFactor.toFixed(2)} diversity × 550
+                  {hs.exposurePenalty > 0 && ` − ${hs.exposurePenalty} exposure`}
+                  . {hs.uniqueCounterparties} unique counterpart
+                  {hs.uniqueCounterparties === 1 ? "y" : "ies"} across{" "}
+                  {hs.concluded} concluded. Defaults weigh double and decay
+                  slowest; late payment earns partial credit; bigger deals
+                  both count more and linger longer (half-life 0.5–3 years).
+                  Same public data, same formula, for everyone.
+                </p>
                 <div className="table-wrap">
                   <table className="agreements-table">
                     <thead>
@@ -257,8 +348,10 @@ export function Lookup() {
                         <th>Outcome</th>
                         <th>Amount</th>
                         <th>Credit</th>
+                        <th>On time ×</th>
                         <th>Size ×</th>
-                        <th>Recency ×</th>
+                        <th>Half-life</th>
+                        <th>Decay ×</th>
                         <th>Weight ×</th>
                       </tr>
                     </thead>
@@ -273,7 +366,9 @@ export function Lookup() {
                           <td>{KIND_LABEL[o.kind]}</td>
                           <td>{formatCad(o.amountCents)}</td>
                           <td>{o.base}</td>
+                          <td>{o.kind === "paid" ? o.punctuality.toFixed(2) : "—"}</td>
                           <td>{o.sizeFactor.toFixed(2)}</td>
+                          <td>{o.halfLifeYears.toFixed(1)}y</td>
                           <td>{o.recencyFactor.toFixed(2)}</td>
                           <td>{o.weightMult}</td>
                         </tr>
@@ -282,10 +377,11 @@ export function Lookup() {
                   </table>
                 </div>
                 <p className="field-note">
-                  score = 300 + [Σ(credit·size·recency) / Σ(weight·size·recency)]
-                  × diversity × 550, where diversity = 0.6 + 0.4 × (unique
-                  counterparties ÷ concluded). Full spec in the README. No
-                  black boxes: same public data, same formula, for everyone.
+                  score = 300 + [Σ(credit·punctuality·size·decay) /
+                  Σ(weight·size·decay)] × diversity × 550 − exposure, where
+                  diversity = 0.6 + 0.4 × (unique ÷ concluded) and exposure
+                  docks up to 40 pts when open commitments exceed 2× lifetime
+                  paid volume. Full spec in the README.
                 </p>
               </details>
             )}
@@ -298,12 +394,12 @@ export function Lookup() {
             return (
               <div className="worker-card">
                 <div className="worker-title">
-                  Vetting lens — this wallet as a worker
+                  Track record — this wallet as the paid party
                 </div>
                 <div className="rep-stats" style={{ borderTop: "none", paddingTop: 0 }}>
                   <div>
                     <span className="pip pip-ok" />
-                    <span className="rep-num">{wr.completedPaid}</span> gigs
+                    <span className="rep-num">{wr.completedPaid}</span>{" "}
                     delivered &amp; paid
                   </div>
                   <div>
@@ -322,17 +418,18 @@ export function Lookup() {
                     <span className="rep-num">
                       {wr.rehires}/{wr.uniqueClients}
                     </span>{" "}
-                    clients rehired them
+                    counterparties came back
                   </div>
                 </div>
+                <WorkLinks wallet={wallet} />
                 <p className="field-note" style={{ marginTop: "0.7rem" }}>
-                  For companies and contractors: payment outcomes double as
-                  delivery evidence — a client confirming payment is a client
-                  who accepted the work. The rehire count is the signal that
-                  can't be faked cheaply: the same client co-signing with the
-                  same worker again. ({wr.defaultsSuffered} time
-                  {wr.defaultsSuffered === 1 ? "" : "s"} a client defaulted on
-                  them — that mark belongs to the client, not the worker.)
+                  Vetting them as a freelancer, seller, sub-contractor, or
+                  landlord? Payment confirmations double as delivery
+                  evidence — a payer confirming is a payer who accepted what
+                  they got. Repeat counterparties are the signal that can't
+                  be faked cheaply. ({wr.defaultsSuffered} time
+                  {wr.defaultsSuffered === 1 ? "" : "s"} a payer defaulted on
+                  them — that mark belongs to the payer, not this wallet.)
                 </p>
               </div>
             );

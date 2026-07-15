@@ -160,3 +160,26 @@
   not the worker. Card on lookup; board chips now role-aware (hiring →
   payer score, offering work → delivery record).
 - Score v2 discussion pending (punctuality, exposure, etc.) — proposal sent.
+
+## 2026-07-14 — feedback round 3 (Tobi) — score v2 + board v2 + trust palette
+
+- SCORE v2: punctuality (on-time ×1.0 / ≤7d ×0.85 / later ×0.7), exposure
+  penalty (open ÷ paid volume, −20/unit past 2×, cap −40), ASYMMETRIC
+  SIZE-SCALED DECAY — halfLife = base(1y paid/1.5y disputed/2y default) ×
+  (0.5 + size/2), clamp [0.5, 3]y. Verdict panel replaces formula wall
+  (formula lives in the breakdown dropdown). Breakdown gains On-time /
+  Half-life / Decay columns.
+- BOARD v2 redeployed: 0x22B2318559aa8d9e55210A778a516bA9A9060067
+  (Sourcify-verified). Kind → Offering/Seeking (use-case neutral),
+  Category enum (Services/Trades/Creative/Goods&Gaming/Rentals/Other),
+  optional work link (≤200B, image URLs render as previews). Filters on
+  kind + category. 5 listings reseeded across 4 categories. Old board
+  0x11a0…6827 abandoned.
+- Work links surface on the lookup track-record card too (WorkLinks reads
+  the wallet's active board listings).
+- Palette → trust blues on cool charcoal (Stripe-school; SS refs), gold
+  demoted to wordmark/kicker flourish. Pips: ring-ping "splash"; score
+  tile fires a one-shot splash ring as the count-up lands. (21st.dev W29
+  page didn't render server-side — interpreted from Tobi's refs.)
+- Copy broadened beyond Jobber: "track record — as the paid party",
+  freelancer/seller/sub-contractor/landlord framing, repeat counterparties.

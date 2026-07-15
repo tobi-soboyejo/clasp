@@ -9,18 +9,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap");
 
 :root {
-  --ink: #0f0d0a; /* page stock */
-  --surface: #17140f; /* raised card */
-  --field: #0b0a07; /* inset input wells */
-  --border: #322b21; /* hairline */
-  --rule: #4d4334; /* strong ledger rule */
-  --text: #d9d0bf;
-  --text-dim: #938876;
-  --head: #f4ecdc;
-  --accent: #d2a94e; /* brass */
-  --accent-bright: #e8c06a;
-  --danger: #d2705c;
-  --ok: #8fc98e;
+  --ink: #141519; /* cool charcoal stock */
+  --surface: #1b1d23; /* raised card */
+  --field: #0f1013; /* inset input wells */
+  --border: #2a2d35; /* hairline */
+  --rule: #3f434d; /* strong ledger rule */
+  --text: #d2d5dc;
+  --text-dim: #8e94a1;
+  --head: #f4f6fa;
+  --accent: #4f8ef7; /* trust blue */
+  --accent-bright: #79b8ff; /* sky */
+  --gold: #c9973f; /* flourish only */
+  --danger: #e06a58;
+  --ok: #74c887;
 
   --display: "Geist", "Helvetica Neue", ui-sans-serif, sans-serif;
   --sans: "Geist", "Helvetica Neue", ui-sans-serif, sans-serif;
@@ -99,7 +100,7 @@ body::after {
 
 .wordmark em {
   font-style: normal;
-  color: var(--accent);
+  color: var(--gold);
 }
 
 .header-sub {
@@ -215,7 +216,7 @@ code {
 
 .connect-btn {
   background: var(--accent);
-  color: var(--ink);
+  color: #fff;
   border: none;
   border-radius: 5px;
   padding: 0.55rem 1.1rem;
@@ -912,7 +913,7 @@ code {
   font-size: 0.66rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--gold);
   display: block;
   margin-bottom: 1.1rem;
 }
@@ -1149,12 +1150,22 @@ a.score-chip:hover {
   margin-right: 0.45rem;
   position: relative;
   top: 0.5px;
-  animation: pip-pulse 2.6s ease-in-out infinite;
 }
 
-@keyframes pip-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 35%, transparent); }
-  50% { box-shadow: 0 0 6px 1px color-mix(in srgb, currentColor 30%, transparent); }
+.pip::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 5px;
+  border: 1px solid currentColor;
+  opacity: 0;
+  animation: pip-ping 3.2s ease-out infinite;
+}
+
+@keyframes pip-ping {
+  0%, 55% { opacity: 0; transform: scale(0.8); }
+  62% { opacity: 0.55; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.9); }
 }
 
 .pip-ok { color: var(--ok); }
@@ -1180,3 +1191,102 @@ a.score-chip:hover {
   color: var(--text-dim);
   margin-bottom: 0.9rem;
 }
+
+/* score tile splash: one ring fired as the number lands */
+.rep-score::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 17px;
+  border: 1.5px solid currentColor;
+  opacity: 0;
+  animation: score-splash 1s ease-out 0.45s 1 both;
+  pointer-events: none;
+}
+
+@keyframes score-splash {
+  0% { opacity: 0.65; transform: scale(0.92); }
+  100% { opacity: 0; transform: scale(1.22); }
+}
+
+/* verdict panel */
+.verdict {
+  color: var(--head);
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.verdict-line { margin: 0; }
+
+.verdict-facts {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+/* board filters + work links */
+.board-filters {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1.1rem 0 0.25rem;
+}
+
+.board-filters select {
+  background: var(--field);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  padding: 0.45rem 0.65rem;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+}
+
+.listing-cat {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.2rem 0.55rem;
+}
+
+.work-links {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 0.9rem;
+  align-items: center;
+}
+
+.work-links img {
+  max-height: 88px;
+  max-width: 150px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  display: block;
+}
+
+.work-link-card {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  text-decoration: none;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-link-card:hover { border-color: var(--accent); }

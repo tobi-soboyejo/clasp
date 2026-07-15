@@ -72,3 +72,7 @@
   (verified, 7 tests, 3 seeded listings w/ inline Handshake Score chips),
   Archivo display type, centered layout, connect-reject error silenced,
   top strip removed. 32/32 tests. Deployed to production.
+- ✅ Round 3: Score v2 (punctuality, exposure, asymmetric size-scaled decay,
+  verdict panel), Board v2 (categories + filters + work links w/ image
+  previews, redeployed + verified), trust-blue palette, splash pips/rings,
+  broadened copy. 32/32 tests. Live on prod.

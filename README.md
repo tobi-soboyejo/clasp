@@ -108,15 +108,21 @@ lens; the record stays.
 
 ```
 per concluded agreement (as the paying party):
-  credit   paid = 1 · disputed = 0.4 · defaulted = 0
-  weight   defaults ×2 (disputing restores partial credit via 0.4)
-  size     amount/$500, clamped [0.25, 3]  — big deals matter, tiny gigs can't pad
-  recency  ½^(age in years)               — 1-year half-life; rehab is arithmetic
+  credit      paid = 1 · disputed = 0.4 · defaulted = 0
+  punctuality paid by deadline ×1.0 · ≤7 days late ×0.85 · later ×0.7
+  weight      defaults ×2 (disputing restores partial credit via 0.4)
+  size        amount/$500, clamped [0.25, 3] — tiny gigs can't pad a record
+  decay       ½^(age/halfLife); halfLife = base × (0.5 + size/2), clamped
+              [0.5y, 3y]; base 1y paid · 1.5y disputed · 2y defaulted.
+              Asymmetric and size-scaled: good marks fade in about a year,
+              a big default lingers up to three. Rehab is arithmetic.
 
-pct       = Σ(credit·size·recency) / Σ(weight·size·recency)
+pct       = Σ(credit·punctuality·size·decay) / Σ(weight·size·decay)
 diversity = 0.6 + 0.4 × (unique counterparties ÷ concluded)  — 10 deals with
             10 people ≠ 10 deals with 1 (anti wash-trading)
-score     = 300 + pct × diversity × 550
+exposure  = open co-signed volume ÷ lifetime paid volume; each unit above
+            2× costs 20 pts, capped at −40 (credit-utilization analog)
+score     = clamp(300 + pct × diversity × 550 − exposure, 300, 850)
             750+ Excellent · 650+ Good · 550+ Fair · 450+ Poor · below Bad
 ```
 

@@ -7,5 +7,5 @@ function gen(artifact, out, exportName) {
     `export const ${exportName} = ` + JSON.stringify(art.abi, null, 2) + ' as const;\n');
   console.log(out, 'regenerated');
 }
-gen('contracts/out/HandshakeRegistry.sol/HandshakeRegistry.json', 'web/src/lib/abi.ts', 'handshakeAbi');
-gen('contracts/out/HandshakeBoard.sol/HandshakeBoard.json', 'web/src/lib/abi-board.ts', 'boardAbi');
+gen('contracts/out/ClaspRegistry.sol/ClaspRegistry.json', 'web/src/lib/abi.ts', 'claspAbi');
+gen('contracts/out/ClaspBoard.sol/ClaspBoard.json', 'web/src/lib/abi-board.ts', 'boardAbi');

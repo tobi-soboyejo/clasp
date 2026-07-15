@@ -80,7 +80,7 @@ function ScoreChip({ wallet, kind }: { wallet: string; kind: number }) {
     );
   }
 
-  const hs = computeReputation(wallet, all, nowSec).handshakeScore;
+  const hs = computeReputation(wallet, all, nowSec).claspScore;
   const cls = `score-chip band-${hs.band.toLowerCase().replace(" ", "-")}`;
   return (
     <Link to={`/lookup/${wallet}`} className={cls} title="Open payment history">
@@ -177,7 +177,7 @@ export function Board() {
       <h1>The board</h1>
       <p className="tagline">
         Work offered and work wanted — with the payment history built in.
-        Every poster's wallet links straight to their Handshake Score, so you
+        Every poster's wallet links straight to their Clasp Score, so you
         can check before you ever reach out.
       </p>
 

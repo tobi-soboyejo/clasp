@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {HandshakeRegistry} from "../src/HandshakeRegistry.sol";
+import {ClaspRegistry} from "../src/ClaspRegistry.sol";
 
-contract HandshakeRegistryTest is Test {
-    HandshakeRegistry internal registry;
+contract ClaspRegistryTest is Test {
+    ClaspRegistry internal registry;
 
     address internal freelancer = makeAddr("freelancer");
     address internal client = makeAddr("client");
@@ -18,7 +18,7 @@ contract HandshakeRegistryTest is Test {
 
     function setUp() public {
         vm.warp(1_752_000_000); // fixed base time so deadline math is deterministic
-        registry = new HandshakeRegistry();
+        registry = new ClaspRegistry();
         deadline = uint64(block.timestamp + 7 days);
     }
 
@@ -46,13 +46,13 @@ contract HandshakeRegistryTest is Test {
 
     function test_HappyPath_CreateCosignConfirmPaid() public {
         vm.expectEmit(true, true, true, true);
-        emit HandshakeRegistry.AgreementCreated(
+        emit ClaspRegistry.AgreementCreated(
             0, freelancer, client, AMOUNT_CENTS, deadline, SCOPE_HASH
         );
         uint256 id = _create();
 
-        HandshakeRegistry.Agreement memory a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Proposed));
+        ClaspRegistry.Agreement memory a = registry.getAgreement(id);
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Proposed));
         assertEq(a.freelancer, freelancer);
         assertEq(a.client, client);
         assertEq(a.amountCents, AMOUNT_CENTS);
@@ -63,22 +63,22 @@ contract HandshakeRegistryTest is Test {
 
         vm.warp(block.timestamp + 1 hours);
         vm.expectEmit(true, true, true, true);
-        emit HandshakeRegistry.AgreementCosigned(id, freelancer, client);
+        emit ClaspRegistry.AgreementCosigned(id, freelancer, client);
         vm.prank(client);
         registry.cosign(id);
 
         a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Active));
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Active));
         assertEq(a.cosignedAt, uint64(block.timestamp));
 
         vm.warp(block.timestamp + 3 days);
         vm.expectEmit(true, true, true, true);
-        emit HandshakeRegistry.PaymentConfirmed(id, freelancer, client);
+        emit ClaspRegistry.PaymentConfirmed(id, freelancer, client);
         vm.prank(client);
         registry.confirmPaid(id);
 
         a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Paid));
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Paid));
         assertEq(a.resolvedAt, uint64(block.timestamp));
     }
 
@@ -98,24 +98,24 @@ contract HandshakeRegistryTest is Test {
 
         vm.warp(deadline + 1);
         vm.expectEmit(true, true, true, true);
-        emit HandshakeRegistry.DefaultFlagged(id, freelancer, client);
+        emit ClaspRegistry.DefaultFlagged(id, freelancer, client);
         vm.prank(freelancer);
         registry.flagDefault(id);
 
-        HandshakeRegistry.Agreement memory a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Defaulted));
+        ClaspRegistry.Agreement memory a = registry.getAgreement(id);
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Defaulted));
         uint64 flaggedAt = a.resolvedAt;
         assertEq(flaggedAt, uint64(block.timestamp));
 
         // client disputes on the last second of the window
         vm.warp(uint256(flaggedAt) + registry.DISPUTE_WINDOW());
         vm.expectEmit(true, true, true, true);
-        emit HandshakeRegistry.DefaultDisputed(id, freelancer, client, REASON_HASH);
+        emit ClaspRegistry.DefaultDisputed(id, freelancer, client, REASON_HASH);
         vm.prank(client);
         registry.dispute(id, REASON_HASH);
 
         a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Disputed));
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Disputed));
         assertEq(a.disputeHash, REASON_HASH);
         assertEq(a.resolvedAt, flaggedAt); // default-flag time is preserved
         assertEq(a.disputedAt, uint64(block.timestamp));
@@ -126,30 +126,30 @@ contract HandshakeRegistryTest is Test {
 
         vm.warp(block.timestamp + registry.DISPUTE_WINDOW() + 1);
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.DisputeWindowClosed.selector);
+        vm.expectRevert(ClaspRegistry.DisputeWindowClosed.selector);
         registry.dispute(id, REASON_HASH);
 
-        HandshakeRegistry.Agreement memory a = registry.getAgreement(id);
-        assertEq(uint8(a.status), uint8(HandshakeRegistry.Status.Defaulted));
+        ClaspRegistry.Agreement memory a = registry.getAgreement(id);
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Defaulted));
     }
 
     // -------------------------------------------------- createAgreement guards
 
     function test_RevertWhen_CreateWithSelfAsClient() public {
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.ClientIsSelf.selector);
+        vm.expectRevert(ClaspRegistry.ClientIsSelf.selector);
         registry.createAgreement(freelancer, AMOUNT_CENTS, deadline, SCOPE_HASH);
     }
 
     function test_RevertWhen_CreateWithZeroClient() public {
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.ClientIsZero.selector);
+        vm.expectRevert(ClaspRegistry.ClientIsZero.selector);
         registry.createAgreement(address(0), AMOUNT_CENTS, deadline, SCOPE_HASH);
     }
 
     function test_RevertWhen_CreateWithPastDeadline() public {
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.DeadlineNotInFuture.selector);
+        vm.expectRevert(ClaspRegistry.DeadlineNotInFuture.selector);
         registry.createAgreement(client, AMOUNT_CENTS, uint64(block.timestamp), SCOPE_HASH);
     }
 
@@ -158,21 +158,21 @@ contract HandshakeRegistryTest is Test {
     function test_RevertWhen_CosignByNonClient() public {
         uint256 id = _create();
         vm.prank(stranger);
-        vm.expectRevert(HandshakeRegistry.NotClient.selector);
+        vm.expectRevert(ClaspRegistry.NotClient.selector);
         registry.cosign(id);
     }
 
     function test_RevertWhen_CosignByFreelancer() public {
         uint256 id = _create();
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.NotClient.selector);
+        vm.expectRevert(ClaspRegistry.NotClient.selector);
         registry.cosign(id);
     }
 
     function test_RevertWhen_CosignTwice() public {
         uint256 id = _createActive();
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.cosign(id);
     }
 
@@ -180,7 +180,7 @@ contract HandshakeRegistryTest is Test {
         uint256 id = _create();
         vm.warp(deadline + 1);
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.ProposalExpired.selector);
+        vm.expectRevert(ClaspRegistry.ProposalExpired.selector);
         registry.cosign(id);
     }
 
@@ -189,21 +189,21 @@ contract HandshakeRegistryTest is Test {
     function test_RevertWhen_ConfirmPaidByNonClient() public {
         uint256 id = _createActive();
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.NotClient.selector);
+        vm.expectRevert(ClaspRegistry.NotClient.selector);
         registry.confirmPaid(id);
     }
 
     function test_RevertWhen_ConfirmPaidWhileProposed() public {
         uint256 id = _create();
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.confirmPaid(id);
     }
 
     function test_RevertWhen_ConfirmPaidAfterDefault() public {
         uint256 id = _createDefaulted();
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.confirmPaid(id);
     }
 
@@ -213,14 +213,14 @@ contract HandshakeRegistryTest is Test {
         uint256 id = _createActive();
         vm.warp(deadline + 1);
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.NotFreelancer.selector);
+        vm.expectRevert(ClaspRegistry.NotFreelancer.selector);
         registry.flagDefault(id);
     }
 
     function test_RevertWhen_FlagDefaultBeforeDeadline() public {
         uint256 id = _createActive();
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.DeadlineNotPassed.selector);
+        vm.expectRevert(ClaspRegistry.DeadlineNotPassed.selector);
         registry.flagDefault(id);
     }
 
@@ -228,7 +228,7 @@ contract HandshakeRegistryTest is Test {
         uint256 id = _createActive();
         vm.warp(deadline);
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.DeadlineNotPassed.selector);
+        vm.expectRevert(ClaspRegistry.DeadlineNotPassed.selector);
         registry.flagDefault(id);
     }
 
@@ -236,7 +236,7 @@ contract HandshakeRegistryTest is Test {
         uint256 id = _create();
         vm.warp(deadline + 1);
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.flagDefault(id);
     }
 
@@ -246,7 +246,7 @@ contract HandshakeRegistryTest is Test {
         registry.confirmPaid(id);
         vm.warp(deadline + 1);
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.flagDefault(id);
     }
 
@@ -255,14 +255,14 @@ contract HandshakeRegistryTest is Test {
     function test_RevertWhen_DisputeByNonClient() public {
         uint256 id = _createDefaulted();
         vm.prank(freelancer);
-        vm.expectRevert(HandshakeRegistry.NotClient.selector);
+        vm.expectRevert(ClaspRegistry.NotClient.selector);
         registry.dispute(id, REASON_HASH);
     }
 
     function test_RevertWhen_DisputeWhileActive() public {
         uint256 id = _createActive();
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.dispute(id, REASON_HASH);
     }
 
@@ -271,18 +271,18 @@ contract HandshakeRegistryTest is Test {
         vm.prank(client);
         registry.dispute(id, REASON_HASH);
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.WrongStatus.selector);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
         registry.dispute(id, REASON_HASH);
     }
 
     // ------------------------------------------------------------------- misc
 
     function test_RevertWhen_UnknownAgreementId() public {
-        vm.expectRevert(HandshakeRegistry.UnknownAgreement.selector);
+        vm.expectRevert(ClaspRegistry.UnknownAgreement.selector);
         registry.getAgreement(0);
 
         vm.prank(client);
-        vm.expectRevert(HandshakeRegistry.UnknownAgreement.selector);
+        vm.expectRevert(ClaspRegistry.UnknownAgreement.selector);
         registry.cosign(42);
     }
 
@@ -297,7 +297,7 @@ contract HandshakeRegistryTest is Test {
         vm.prank(stranger);
         registry.createAgreement(client, 75_000, deadline, SCOPE_HASH);
 
-        HandshakeRegistry.Agreement[] memory page = registry.getAgreements(0, 3);
+        ClaspRegistry.Agreement[] memory page = registry.getAgreements(0, 3);
         assertEq(page.length, 3);
         assertEq(page[0].client, client);
         assertEq(page[1].client, stranger);

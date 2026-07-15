@@ -1,6 +1,6 @@
 <img src="web/public/logo.svg" width="110" alt="Handshake logo" />
 
-# Handshake
+# Clasp
 
 **A payment-reputation registry for informal gig work, on Monad testnet.**
 
@@ -8,7 +8,7 @@ A client owed me $2,000 for completed work and vanished — I'm pursuing it
 legally. There was no way to check his payment history before taking the job,
 and there's no way for the next freelancer to learn from what happened to me.
 Informal work has no credit bureau: payment behavior lives in private inboxes
-and dies there. Handshake is the credit check I wish I'd run.
+and dies there. Clasp is the credit check I wish I'd run.
 
 ## How it works
 
@@ -37,13 +37,13 @@ cryptographic signature on the original agreement.
 ## Structure
 
 ```
-contracts/   Foundry project — HandshakeRegistry.sol + tests
+contracts/   Foundry project — ClaspRegistry.sol + tests
 web/         React + Vite + wagmi frontend (coming)
 ```
 
 ## Contract
 
-One contract, deliberately minimal: [`HandshakeRegistry.sol`](contracts/src/HandshakeRegistry.sol)
+One contract, deliberately minimal: [`ClaspRegistry.sol`](contracts/src/ClaspRegistry.sol)
 
 State machine per agreement:
 
@@ -64,10 +64,10 @@ aggregate counters.
 
 | | |
 |---|---|
-| Contract | [`0xbefa778FDb69FCD1F851801a5D5e8b8191C7929c`](https://testnet.monadvision.com/address/0xbefa778FDb69FCD1F851801a5D5e8b8191C7929c) |
+| Contract | [`0xf08e5b2B3A0E72CD5Fb3d8468827d09a1175718c`](https://testnet.monadvision.com/address/0xf08e5b2B3A0E72CD5Fb3d8468827d09a1175718c) |
 | Chain ID | 10143 |
 | RPC | `https://testnet-rpc.monad.xyz` |
-| Deploy tx | `0x2f9ffadefb1dcb173148a0b691e28f65d6d3f68bfa7d7753d0107216aa3bae7b` |
+| Deploy tx | `(see explorer — ClaspRegistry creation tx)` |
 | Source verified | Sourcify (exact match) — readable on the explorer |
 
 Design note: Monad's public RPC caps `eth_getLogs` at a 100-block range, so
@@ -99,7 +99,7 @@ window, boundary conditions).
 3. **Cold start** — a registry's value grows with network size. Roadmap: embed
    as a reputation layer inside existing freelance platforms.
 
-## The Handshake Score is not a black box
+## The Clasp Score is not a black box
 
 The lookup screen shows a 300–850 score computed client-side from public
 onchain state, with every input printed on the card. On a public chain an

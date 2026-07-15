@@ -5,7 +5,7 @@ import {
 } from "./agreements";
 
 /**
- * The Handshake Score v2: 300–850, computed client-side from public onchain
+ * The Clasp Score v2: 300–850, computed client-side from public onchain
  * state at render time. Glass-box on principle — every factor is printed on
  * the reputation card and documented in the README. The data is the
  * permanent record; the score is a published, contestable lens over it.
@@ -46,7 +46,7 @@ export interface ScoredOutcome {
   recencyFactor: number;
 }
 
-export interface HandshakeScore {
+export interface ClaspScore {
   score: number | null;
   band: string;
   pct: number | null;
@@ -80,7 +80,7 @@ export interface Reputation {
     volumeCents: bigint;
   };
   firstSeen: bigint | null;
-  handshakeScore: HandshakeScore;
+  claspScore: ClaspScore;
 }
 
 const YEAR_SECONDS = 365 * 24 * 3600;
@@ -136,7 +136,7 @@ function punctualityFor(a: AgreementData, kind: OutcomeKind): number {
 export function computeScore(
   rows: { a: AgreementData; id: bigint }[],
   nowSec: bigint,
-): HandshakeScore {
+): ClaspScore {
   const outcomes: ScoredOutcome[] = [];
   let openVolumeCents = 0n;
   let paidVolumeCents = 0n;
@@ -307,7 +307,7 @@ export function computeReputation(
       volumeCents: volumeF,
     },
     firstSeen,
-    handshakeScore: computeScore(asClientRows, nowSec),
+    claspScore: computeScore(asClientRows, nowSec),
   };
 }
 

@@ -1,5 +1,5 @@
 import { Link, NavLink, Route, Routes } from "react-router-dom";
-import { EXPLORER_URL, HANDSHAKE_ADDRESS } from "./lib/config";
+import { EXPLORER_URL, CLASP_ADDRESS } from "./lib/config";
 import { ConnectButton } from "./components/ConnectButton";
 import { Home } from "./screens/Home";
 import { NewAgreement } from "./screens/NewAgreement";
@@ -15,7 +15,7 @@ export default function App() {
           <img src="/logo.svg" alt="" className="brand-logo" />
           <div className="brand">
             <Link to="/" className="wordmark">
-              Hand<em>shake</em>
+              Clasp<em>.</em>
             </Link>
             <span className="header-sub">Monad Testnet · Registry Nº 10143</span>
           </div>
@@ -43,14 +43,14 @@ export default function App() {
       <footer className="app-footer">
         <span>A registry, not an escrow — no funds ever move onchain.</span>
         <a
-          href={`${EXPLORER_URL}/address/${HANDSHAKE_ADDRESS}`}
+          href={`${EXPLORER_URL}/address/${CLASP_ADDRESS}`}
           target="_blank"
           rel="noreferrer"
         >
           Contract on Monad testnet
         </a>
         <a
-          href="https://github.com/tobi-soboyejo/handshake"
+          href="https://github.com/tobi-soboyejo/clasp"
           target="_blank"
           rel="noreferrer"
         >

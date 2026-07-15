@@ -11,7 +11,7 @@ import {
   statusClass,
 } from "../lib/agreements";
 import { shortAddress } from "../lib/agreements";
-import { HANDSHAKE_ADDRESS, BOARD_ADDRESS } from "../lib/config";
+import { CLASP_ADDRESS, BOARD_ADDRESS } from "../lib/config";
 import { boardAbi } from "../lib/abi-board";
 import { useReadContract } from "wagmi";
 import {
@@ -144,7 +144,7 @@ export function Lookup() {
     navigate(`/lookup/${input.trim()}`);
   }
 
-  const hs = rep?.handshakeScore;
+  const hs = rep?.claspScore;
 
   return (
     <section>
@@ -195,7 +195,7 @@ export function Lookup() {
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}{" "}
-                · registry {shortAddress(HANDSHAKE_ADDRESS)}
+                · registry {shortAddress(CLASP_ADDRESS)}
               </span>
             </div>
             <div className="rep-body">
@@ -338,7 +338,7 @@ export function Lookup() {
               <details className="score-breakdown">
                 <summary>How this score is computed — every input</summary>
                 <p className="field-note" style={{ margin: "0.6rem 0" }}>
-                  <strong>Handshake Score {hs.score}</strong> = 300 +{" "}
+                  <strong>Clasp Score {hs.score}</strong> = 300 +{" "}
                   {Math.round((hs.pct ?? 0) * 100)}% outcome credit ×{" "}
                   {hs.diversityFactor.toFixed(2)} diversity × 550
                   {hs.exposurePenalty > 0 && ` − ${hs.exposurePenalty} exposure`}

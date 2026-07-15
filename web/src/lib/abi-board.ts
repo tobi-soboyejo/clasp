@@ -1,4 +1,4 @@
-// Generated from contracts/out/HandshakeBoard.sol/HandshakeBoard.json
+// Generated from contracts/out/ClaspBoard.sol/ClaspBoard.json
 // Regenerate: node scripts/gen-abi.cjs
 export const boardAbi = [
   {
@@ -72,7 +72,7 @@ export const boardAbi = [
       {
         "name": "page",
         "type": "tuple[]",
-        "internalType": "struct HandshakeBoard.Listing[]",
+        "internalType": "struct ClaspBoard.Listing[]",
         "components": [
           {
             "name": "poster",
@@ -82,12 +82,12 @@ export const boardAbi = [
           {
             "name": "kind",
             "type": "uint8",
-            "internalType": "enum HandshakeBoard.Kind"
+            "internalType": "enum ClaspBoard.Kind"
           },
           {
             "name": "category",
             "type": "uint8",
-            "internalType": "enum HandshakeBoard.Category"
+            "internalType": "enum ClaspBoard.Category"
           },
           {
             "name": "title",
@@ -144,12 +144,12 @@ export const boardAbi = [
       {
         "name": "kind",
         "type": "uint8",
-        "internalType": "enum HandshakeBoard.Kind"
+        "internalType": "enum ClaspBoard.Kind"
       },
       {
         "name": "category",
         "type": "uint8",
-        "internalType": "enum HandshakeBoard.Category"
+        "internalType": "enum ClaspBoard.Category"
       },
       {
         "name": "title",
@@ -220,7 +220,7 @@ export const boardAbi = [
         "name": "kind",
         "type": "uint8",
         "indexed": false,
-        "internalType": "enum HandshakeBoard.Kind"
+        "internalType": "enum ClaspBoard.Kind"
       },
       {
         "name": "title",

@@ -7,8 +7,8 @@ import {
   useWriteContract,
 } from "wagmi";
 import { monadTestnet } from "wagmi/chains";
-import { handshakeAbi } from "../lib/abi";
-import { HANDSHAKE_ADDRESS, EXPLORER_URL } from "../lib/config";
+import { claspAbi } from "../lib/abi";
+import { CLASP_ADDRESS, EXPLORER_URL } from "../lib/config";
 import {
   type AgreementData,
   DISPUTE_WINDOW_SECONDS,
@@ -47,8 +47,8 @@ export function AgreementDetail() {
     isLoading,
     refetch,
   } = useReadContract({
-    address: HANDSHAKE_ADDRESS,
-    abi: handshakeAbi,
+    address: CLASP_ADDRESS,
+    abi: claspAbi,
     functionName: "getAgreement",
     args: id !== undefined ? [id] : undefined,
     query: { enabled: id !== undefined, refetchInterval: 15_000 },
@@ -112,7 +112,7 @@ export function AgreementDetail() {
   const busy = isPending || isConfirming;
   const write = (functionName: "cosign" | "confirmPaid" | "flagDefault") => {
     setPendingTxKey(functionName === "cosign" ? "cosigned" : "resolved");
-    writeContract({ address: HANDSHAKE_ADDRESS, abi: handshakeAbi, functionName, args: [id] });
+    writeContract({ address: CLASP_ADDRESS, abi: claspAbi, functionName, args: [id] });
   };
 
   function submitDispute() {
@@ -120,8 +120,8 @@ export function AgreementDetail() {
     saveDisputeText(id!, disputeReason);
     setPendingTxKey("disputed");
     writeContract({
-      address: HANDSHAKE_ADDRESS,
-      abi: handshakeAbi,
+      address: CLASP_ADDRESS,
+      abi: claspAbi,
       functionName: "dispute",
       args: [id!, hashText(disputeReason)],
     });
@@ -290,7 +290,7 @@ export function AgreementDetail() {
       <p className="field-note">
         Timestamps read from contract state.{" "}
         <a
-          href={`${EXPLORER_URL}/address/${HANDSHAKE_ADDRESS}`}
+          href={`${EXPLORER_URL}/address/${CLASP_ADDRESS}`}
           target="_blank"
           rel="noreferrer"
         >

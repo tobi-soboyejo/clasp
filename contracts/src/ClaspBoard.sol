@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title HandshakeBoard
-/// @notice A minimal public job board that lives beside HandshakeRegistry:
+/// @title ClaspBoard
+/// @notice A minimal public job board that lives beside ClaspRegistry:
 ///         freelancers post availability, clients post work. Listing text is
 ///         stored onchain (v1 has no backend and hashes can't be shared
 ///         between browsers) — fine at this scale, and it keeps the whole
 ///         product readable from public state alone. The point of the board
 ///         is the pairing: every poster's wallet links to their payment
-///         history and Handshake Score in the registry.
-contract HandshakeBoard {
+///         history and Clasp Score in the registry.
+contract ClaspBoard {
     enum Kind {
         Offering, // selling services, goods, availability
         Seeking // buying, hiring, requesting

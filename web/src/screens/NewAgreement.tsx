@@ -7,8 +7,8 @@ import {
   useWriteContract,
 } from "wagmi";
 import { monadTestnet } from "wagmi/chains";
-import { handshakeAbi } from "../lib/abi";
-import { HANDSHAKE_ADDRESS, EXPLORER_URL } from "../lib/config";
+import { claspAbi } from "../lib/abi";
+import { CLASP_ADDRESS, EXPLORER_URL } from "../lib/config";
 import { hashText, saveScopeText, saveTxHash } from "../lib/agreements";
 import { RegistryStats } from "../components/RegistryStats";
 
@@ -32,7 +32,7 @@ export function NewAgreement() {
     for (const log of receipt.logs) {
       try {
         const decoded = decodeEventLog({
-          abi: handshakeAbi,
+          abi: claspAbi,
           data: log.data,
           topics: log.topics,
         });
@@ -71,8 +71,8 @@ export function NewAgreement() {
     if (!scope.trim()) return setFormError("Describe the scope of work.");
 
     writeContract({
-      address: HANDSHAKE_ADDRESS,
-      abi: handshakeAbi,
+      address: CLASP_ADDRESS,
+      abi: claspAbi,
       functionName: "createAgreement",
       args: [
         client as `0x${string}`,

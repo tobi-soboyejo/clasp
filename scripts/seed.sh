@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Seed demo agreements on the deployed HandshakeRegistry with REAL testnet
+# Seed demo agreements on the deployed ClaspRegistry with REAL testnet
 # transactions (the judging agent penalizes hardcoded data — everything the
 # app shows must come from the chain).
 #
@@ -35,4 +35,4 @@ echo "== Done. agreementCount:"
 cast call "$REGISTRY" "agreementCount()(uint256)" --rpc-url "$RPC_URL"
 echo
 echo "Scope texts are NOT onchain (only hashes). To render them in a browser,"
-echo "paste into localStorage, e.g.:  localStorage.setItem('handshake:scope:0', <text>)"
+echo "paste into localStorage, e.g.:  localStorage.setItem('clasp:scope:0', <text>)"

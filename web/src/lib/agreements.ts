@@ -54,7 +54,7 @@ export type TxKey = "created" | "cosigned" | "resolved" | "disputed";
 /** Tx hashes for actions taken through this browser, so the timeline can
  *  deep-link to the explorer without any log scanning. Actions taken
  *  elsewhere still show (state has the timestamps) — just without a link. */
-const txKeyFor = (id: bigint, key: TxKey) => `handshake:tx:${id}:${key}`;
+const txKeyFor = (id: bigint, key: TxKey) => `clasp:tx:${id}:${key}`;
 
 export function saveTxHash(id: bigint, key: TxKey, hash: string) {
   localStorage.setItem(txKeyFor(id, key), hash);
@@ -69,7 +69,7 @@ export function loadTxHash(id: bigint, key: TxKey): string | null {
  * can be squatted and spoofed; a label you assigned yourself can't lie to
  * you. Visible only in this browser. */
 
-const nameKey = (addr: string) => `handshake:name:${addr.toLowerCase()}`;
+const nameKey = (addr: string) => `clasp:name:${addr.toLowerCase()}`;
 
 export function saveNickname(addr: string, name: string) {
   if (name.trim()) localStorage.setItem(nameKey(addr), name.trim());
@@ -127,8 +127,8 @@ export function shortAddress(addr: string) {
 /* v1 keeps full agreement text off-chain in localStorage (see README
  * limitations). Only the keccak256 hash lives onchain. */
 
-const scopeKey = (id: bigint) => `handshake:scope:${id}`;
-const disputeKey = (id: bigint) => `handshake:dispute:${id}`;
+const scopeKey = (id: bigint) => `clasp:scope:${id}`;
+const disputeKey = (id: bigint) => `clasp:dispute:${id}`;
 
 export function saveScopeText(id: bigint, text: string) {
   localStorage.setItem(scopeKey(id), text);

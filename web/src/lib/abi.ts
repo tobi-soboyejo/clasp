@@ -1,6 +1,6 @@
-// Generated from contracts/out/HandshakeRegistry.sol/HandshakeRegistry.json
+// Generated from contracts/out/ClaspRegistry.sol/ClaspRegistry.json
 // Regenerate: node scripts/gen-abi.cjs
-export const handshakeAbi = [
+export const claspAbi = [
   {
     "type": "function",
     "name": "DISPUTE_WINDOW",
@@ -132,7 +132,7 @@ export const handshakeAbi = [
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct HandshakeRegistry.Agreement",
+        "internalType": "struct ClaspRegistry.Agreement",
         "components": [
           {
             "name": "freelancer",
@@ -187,7 +187,7 @@ export const handshakeAbi = [
           {
             "name": "status",
             "type": "uint8",
-            "internalType": "enum HandshakeRegistry.Status"
+            "internalType": "enum ClaspRegistry.Status"
           }
         ]
       }
@@ -213,7 +213,7 @@ export const handshakeAbi = [
       {
         "name": "page",
         "type": "tuple[]",
-        "internalType": "struct HandshakeRegistry.Agreement[]",
+        "internalType": "struct ClaspRegistry.Agreement[]",
         "components": [
           {
             "name": "freelancer",
@@ -268,7 +268,7 @@ export const handshakeAbi = [
           {
             "name": "status",
             "type": "uint8",
-            "internalType": "enum HandshakeRegistry.Status"
+            "internalType": "enum ClaspRegistry.Status"
           }
         ]
       }

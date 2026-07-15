@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title HandshakeRegistry
+/// @title ClaspRegistry
 /// @notice A payment-reputation registry for informal gig work. A freelancer
 ///         proposes an agreement (scope hash, fiat amount, deadline); the
 ///         client co-signs it onchain. After the deadline the outcome —
@@ -15,7 +15,7 @@ pragma solidity ^0.8.24;
 ///
 ///         Reputation is computed off-chain from events — the contract
 ///         stores no aggregate counters.
-contract HandshakeRegistry {
+contract ClaspRegistry {
     enum Status {
         Proposed, // created by freelancer, awaiting client co-signature
         Active, // co-signed by client, work in progress

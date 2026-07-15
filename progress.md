@@ -76,3 +76,7 @@
   verdict panel), Board v2 (categories + filters + work links w/ image
   previews, redeployed + verified), trust-blue palette, splash pips/rings,
   broadened copy. 32/32 tests. Live on prod.
+- ✅ Round 4: real @paper-design/shaders-react PulsingBorder on the score
+  tile + stat boxes (band-colored perimeter glow), Tobi's vector logo in
+  header/favicon/README recolored to palette blue, wordmark accent fixed
+  to trust blue. No console errors; verified in browser.

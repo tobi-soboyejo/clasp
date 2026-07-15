@@ -100,7 +100,7 @@ body::after {
 
 .wordmark em {
   font-style: normal;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .header-sub {
@@ -670,20 +670,9 @@ code {
   padding: 0.7rem 0.5rem;
 }
 
-.rep-score::before {
-  content: "";
-  position: absolute;
-  inset: -22px;
-  background: radial-gradient(closest-side, currentColor, transparent 72%);
-  opacity: 0.22;
-  filter: blur(14px);
-  z-index: -1;
-  animation: breathe 4.5s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%, 100% { opacity: 0.14; transform: scale(0.96); }
-  50% { opacity: 0.28; transform: scale(1.03); }
+.rep-score > span {
+  position: relative;
+  z-index: 1;
 }
 
 .rep-score-num {
@@ -913,7 +902,7 @@ code {
   font-size: 0.66rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   display: block;
   margin-bottom: 1.1rem;
 }
@@ -1192,22 +1181,7 @@ a.score-chip:hover {
   margin-bottom: 0.9rem;
 }
 
-/* score tile splash: one ring fired as the number lands */
-.rep-score::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: 17px;
-  border: 1.5px solid currentColor;
-  opacity: 0;
-  animation: score-splash 1s ease-out 0.45s 1 both;
-  pointer-events: none;
-}
 
-@keyframes score-splash {
-  0% { opacity: 0.65; transform: scale(0.92); }
-  100% { opacity: 0; transform: scale(1.22); }
-}
 
 /* verdict panel */
 .verdict {
@@ -1290,3 +1264,33 @@ a.score-chip:hover {
 }
 
 .work-link-card:hover { border-color: var(--accent); }
+
+/* stat boxes hosting the pulsing-border shader */
+.stat-box {
+  position: relative;
+  padding: 0.5rem 0.85rem;
+  border-radius: 10px;
+  background: var(--field);
+  border: 1px solid var(--border);
+}
+
+.stat-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rep-stats {
+  gap: 0.8rem;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-logo {
+  height: 30px;
+  width: auto;
+  display: block;
+}

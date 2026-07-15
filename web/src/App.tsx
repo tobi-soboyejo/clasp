@@ -11,11 +11,14 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <div className="brand">
-          <Link to="/" className="wordmark">
-            Hand<em>shake</em>
-          </Link>
-          <span className="header-sub">Monad Testnet · Registry Nº 10143</span>
+        <div className="brand-lockup">
+          <img src="/logo.svg" alt="" className="brand-logo" />
+          <div className="brand">
+            <Link to="/" className="wordmark">
+              Hand<em>shake</em>
+            </Link>
+            <span className="header-sub">Monad Testnet · Registry Nº 10143</span>
+          </div>
         </div>
         <nav>
           <NavLink to="/" end>

@@ -1,4 +1,6 @@
-# Handshake 🤝
+<img src="web/public/logo.svg" width="110" alt="Handshake logo" />
+
+# Handshake
 
 **A payment-reputation registry for informal gig work, on Monad testnet.**
 

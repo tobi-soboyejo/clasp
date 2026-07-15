@@ -22,6 +22,7 @@ import {
 
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
+import { GlowBorder, BAND_GLOW } from "../components/GlowBorder";
 
 const KIND_LABEL: Record<ScoredOutcome["kind"], string> = {
   paid: "paid",
@@ -217,6 +218,10 @@ export function Lookup() {
 
             <div className="rep-grade-row">
               <div className={`rep-score ${scoreClass(hs.band)}`}>
+                <GlowBorder
+                  colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
+                  borderRadius={16}
+                />
                 <span className="rep-score-num">
                   {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
                 </span>
@@ -290,17 +295,20 @@ export function Lookup() {
             </div>
 
             <div className="rep-stats">
-              <div>
+              <div className="stat-box">
+                <GlowBorder colors={BAND_GLOW.excellent} borderRadius={10} inset={-2} intensity={0.4} />
                 <span className="pip pip-ok" />
                 <span className="rep-num">{rep.asClient.paid}</span> paid
               </div>
-              <div>
+              <div className="stat-box">
+                <GlowBorder colors={BAND_GLOW.bad} borderRadius={10} inset={-2} intensity={0.4} />
                 <span className="pip pip-bad" />
                 <span className="rep-num">{rep.asClient.silentDefaults}</span>{" "}
                 silent defaults
               </div>
               {rep.asClient.windowOpenDefaults > 0 && (
-                <div>
+                <div className="stat-box">
+                  <GlowBorder colors={BAND_GLOW.bad} borderRadius={10} inset={-2} intensity={0.4} />
                   <span className="pip pip-bad" />
                   <span className="rep-num">
                     {rep.asClient.windowOpenDefaults}
@@ -308,16 +316,17 @@ export function Lookup() {
                   defaulted, window open
                 </div>
               )}
-              <div>
+              <div className="stat-box">
+                <GlowBorder colors={BAND_GLOW.fair} borderRadius={10} inset={-2} intensity={0.4} />
                 <span className="pip pip-warn" />
                 <span className="rep-num">{rep.asClient.disputed}</span>{" "}
                 disputed
               </div>
-              <div>
+              <div className="stat-box stat-plain">
                 <span className="rep-num">{formatCad(rep.asClient.volumeCents)}</span>{" "}
                 as client
               </div>
-              <div>
+              <div className="stat-box stat-plain">
                 <span className="rep-num">
                   {formatCad(rep.asFreelancer.volumeCents)}
                 </span>{" "}

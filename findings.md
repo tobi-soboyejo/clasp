@@ -183,3 +183,22 @@
   page didn't render server-side — interpreted from Tobi's refs.)
 - Copy broadened beyond Jobber: "track record — as the paid party",
   freelancer/seller/sub-contractor/landlord framing, repeat counterparties.
+
+## 2026-07-14 — RENAME: Handshake → Clasp
+
+- Why: name triple-booked — joinhandshake.com (career network, hiring-
+  adjacent trademark space) and Handshake/HNS (crypto naming protocol).
+- ClaspRegistry 0xf08e5b2B3A0E72CD5Fb3d8468827d09a1175718c and ClaspBoard
+  0x432a33034C9ccabD73c17C08B9237a2aC6C81Ae9, both Sourcify-verified.
+  Old contracts abandoned (their data stays onchain, app no longer reads).
+- Demo data fully reseeded: 8 agreements (CLIENT1 good ~777 range, CLIENT2
+  bad w/ default+dispute), 5 board listings. NOTE: Tobi's MetaMask wallet
+  (0x825e…1ef0) has NO history on the new registry — he re-runs the propose
+  flow live in the demo video (better anyway).
+- Repo renamed github.com/tobi-soboyejo/clasp (GitHub auto-redirects old
+  URLs; commit history + timestamps intact). New prod URL:
+  https://clasp-rosy.vercel.app (old handshake-wine project still exists,
+  stale — consider deleting in Vercel dashboard).
+- Landing copy broadened: "The credit check for deals between strangers,"
+  gig/digital-goods/trades/rent named. "Clasp Score" everywhere. Local
+  storage keys renamed (old browser data orphaned; harmless).

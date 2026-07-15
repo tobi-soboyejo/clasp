@@ -80,3 +80,7 @@
   tile + stat boxes (band-colored perimeter glow), Tobi's vector logo in
   header/favicon/README recolored to palette blue, wordmark accent fixed
   to trust blue. No console errors; verified in browser.
+- ✅ RENAMED to Clasp (name collisions: joinhandshake.com + Handshake HNS).
+  Contracts redeployed + verified (ClaspRegistry 0xf08e…718c, ClaspBoard
+  0x432a…1Ae9), data reseeded, repo now tobi-soboyejo/clasp, live at
+  https://clasp-rosy.vercel.app, landing copy broadened. 32/32 tests.

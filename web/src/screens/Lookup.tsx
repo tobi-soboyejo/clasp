@@ -255,12 +255,14 @@ export function Lookup() {
 
             <div className="rep-grade-row">
               <div className={`rep-score ${scoreClass(hs.band)}`}>
-                <GlowBorder
-                  colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
-                  borderRadius={26}
-                  inset={-12}
-                  intensity={0.75}
-                />
+                {hs.score !== null && (
+                  <GlowBorder
+                    colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
+                    borderRadius={26}
+                    inset={-12}
+                    intensity={0.75}
+                  />
+                )}
                 <span className="rep-score-num">
                   {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
                 </span>

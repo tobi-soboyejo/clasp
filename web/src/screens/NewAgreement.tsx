@@ -12,51 +12,6 @@ import { CLASP_ADDRESS, EXPLORER_URL } from "../lib/config";
 import { hashText, saveScopeText, saveTxHash } from "../lib/agreements";
 import { RegistryStats } from "../components/RegistryStats";
 
-/** Deal-type presets: same contract underneath, different framing —
- *  placeholder copy and a sensible default deadline per type. */
-const PRESETS = [
-  {
-    key: "contract",
-    label: "Contract work",
-    scopePh:
-      "What you're delivering, by when, for how much — e.g. \"5-page site, copy included, live by the 24th, $1,850 on delivery.\"",
-    days: 7,
-  },
-  {
-    key: "virtual",
-    label: "Virtual item / account",
-    scopePh:
-      "Item, transfer method, timing — e.g. \"Valorant account lvl 214, login + email handover within 24h of e-transfer.\"",
-    days: 1,
-  },
-  {
-    key: "rent",
-    label: "Rent",
-    scopePh:
-      "Unit, period, amount — e.g. \"August rent, basement unit at Main St, $1,400 due the 1st.\"",
-    days: null, // 1st of next month
-  },
-  {
-    key: "custom",
-    label: "Custom",
-    scopePh: "Any promise to pay: what's owed, by when, for how much.",
-    days: null,
-  },
-] as const;
-
-function presetDeadline(key: string): string {
-  const d = new Date();
-  if (key === "rent") {
-    const first = new Date(d.getFullYear(), d.getMonth() + 1, 1, 12, 0);
-    return first.toISOString().slice(0, 16);
-  }
-  const preset = PRESETS.find((p) => p.key === key);
-  if (!preset?.days) return "";
-  const t = new Date(d.getTime() + preset.days * 86_400_000);
-  t.setMinutes(0);
-  return t.toISOString().slice(0, 16);
-}
-
 export function NewAgreement() {
   const { address, isConnected, chainId } = useAccount();
   const onMonad = chainId === monadTestnet.id;
@@ -65,7 +20,6 @@ export function NewAgreement() {
   const [amount, setAmount] = useState("");
   const [deadline, setDeadline] = useState("");
   const [scope, setScope] = useState("");
-  const [preset, setPreset] = useState<string>("contract");
   const [formError, setFormError] = useState<string | null>(null);
 
   const { writeContract, data: txHash, isPending, error: writeError, reset } =
@@ -183,23 +137,6 @@ export function NewAgreement() {
         promise to pay.
       </p>
 
-      <div className="preset-chips">
-        {PRESETS.map((p) => (
-          <button
-            key={p.key}
-            type="button"
-            className={`preset-chip ${preset === p.key ? "active" : ""}`}
-            onClick={() => {
-              setPreset(p.key);
-              const suggested = presetDeadline(p.key);
-              if (suggested) setDeadline(suggested);
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-
       <form className="agreement-form" onSubmit={submit}>
         <label>
           Your client's wallet address
@@ -234,12 +171,12 @@ export function NewAgreement() {
           />
         </label>
         <label>
-          {preset === "virtual" ? "What's being sold" : preset === "rent" ? "What's owed" : "Scope of work"}
+          Scope of work
           <textarea
             value={scope}
             onChange={(e) => setScope(e.target.value)}
             rows={5}
-            placeholder={PRESETS.find((p) => p.key === preset)?.scopePh}
+            placeholder="What's owed, by when, for how much — a gig, an item, rent, any promise to pay."
           />
           <span className="field-note">
             Only a fingerprint (keccak256 hash) of this text goes onchain. The

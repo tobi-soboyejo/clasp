@@ -4,6 +4,8 @@
 
 **A payment-reputation registry for informal gig work, on Monad testnet.**
 
+**Live: [claspscore.com](https://claspscore.com)**
+
 A client owed me $2,000 for completed work and vanished — I'm pursuing it
 legally. There was no way to check his payment history before taking the job,
 and there's no way for the next freelancer to learn from what happened to me.

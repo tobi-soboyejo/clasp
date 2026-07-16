@@ -84,3 +84,5 @@
   Contracts redeployed + verified (ClaspRegistry 0xf08e…718c, ClaspBoard
   0x432a…1Ae9), data reseeded, repo now tobi-soboyejo/clasp, live at
   https://clasp-rosy.vercel.app, landing copy broadened. 32/32 tests.
+- ✅ Round 5: ClaspProfile identity layer (self-declared names, 37/37 tests,
+  seeded personas), shader glow fixed to borders, OG image + meta tags.

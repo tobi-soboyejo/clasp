@@ -202,3 +202,22 @@
 - Landing copy broadened: "The credit check for deals between strangers,"
   gig/digital-goods/trades/rent named. "Clasp Score" everywhere. Local
   storage keys renamed (old browser data orphaned; harmless).
+
+## 2026-07-15 — identity layer + border-glow fix + meta/OG
+
+- ClaspProfile deployed + verified: 0x3A853A7Ed366C545c2f37928CA6e08dcBE694e69.
+  Self-declared display names (≤40B) + optional link; NOT unique by design —
+  names annotate the address (always shown), never replace it. Local petname
+  still wins over declared name. Demo personas seeded via real txs:
+  Northside Web Studio / Lakeshore Solar Co. / Bright Smile Dental /
+  Maple Print & Field Co. "Set public name" on your own lookup page.
+- PulsingBorder fix journey: library forces canvas z:-1 (own inline style) →
+  needs an isolated positioned wrapper; `margin` prop pushes the ring out of
+  view (semantics unclear) — avoid; opaque "cage" panels hide the ring
+  because it draws inset from the canvas edge. Final: canvas hugs the box
+  (inset -1/-2), no panels, thin ring params (thickness .08, softness .4,
+  smoke 0), text z-raised above. Effect now reads as border light.
+- Meta/OG: full description + og:* + twitter:* tags; og.png (1200×630)
+  generated from the logo via @resvg/resvg-js (scripts stay reproducible).
+  SSR declined deliberately: Vite SPA whose content is client-side chain
+  reads — framework migration days before deadline buys nothing judges see.

@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { isAddress } from "viem";
-import { useAccount } from "wagmi";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import {
   type AgreementData,
   Status,
@@ -11,8 +15,9 @@ import {
   statusClass,
 } from "../lib/agreements";
 import { shortAddress } from "../lib/agreements";
-import { CLASP_ADDRESS, BOARD_ADDRESS } from "../lib/config";
+import { CLASP_ADDRESS, BOARD_ADDRESS, PROFILE_ADDRESS } from "../lib/config";
 import { boardAbi } from "../lib/abi-board";
+import { claspProfileAbi } from "../lib/abi-profile";
 import { useReadContract } from "wagmi";
 import {
   computeReputation,
@@ -71,6 +76,35 @@ function WorkLinks({ wallet }: { wallet: string }) {
         ),
       )}
     </div>
+  );
+}
+
+/** Publish (or update) your self-declared name — a real onchain tx. The
+ *  address stays visible everywhere; the name only annotates it. */
+function SetPublicName() {
+  const { writeContract, data: txHash, isPending } = useWriteContract();
+  const { isLoading: confirming, isSuccess } = useWaitForTransactionReceipt({
+    hash: txHash,
+  });
+
+  function run() {
+    const name = window.prompt(
+      "Public display name for your wallet (shown next to your address, max 40 bytes; empty clears it):",
+    );
+    if (name === null) return;
+    const link = window.prompt("Optional link (portfolio/site), or leave empty:", "") ?? "";
+    writeContract({
+      address: PROFILE_ADDRESS,
+      abi: claspProfileAbi,
+      functionName: "setProfile",
+      args: [name.trim(), link.trim()],
+    });
+  }
+
+  return (
+    <button className="link-btn" style={{ marginTop: 0 }} onClick={run} disabled={isPending || confirming}>
+      {isPending || confirming ? "Publishing name…" : isSuccess ? "Name published ✓" : "Set public name"}
+    </button>
   );
 }
 
@@ -204,6 +238,9 @@ export function Lookup() {
                 address={wallet}
                 you={wallet.toLowerCase() === myAddress?.toLowerCase()}
               />
+              {wallet.toLowerCase() === myAddress?.toLowerCase() && (
+                <SetPublicName />
+              )}
               <span className="rep-first-seen">
                 {rep.firstSeen !== null ? (
                   <>
@@ -221,6 +258,8 @@ export function Lookup() {
                 <GlowBorder
                   colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
                   borderRadius={16}
+                  inset={-2}
+                  intensity={0.65}
                 />
                 <span className="rep-score-num">
                   {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
@@ -296,41 +335,53 @@ export function Lookup() {
 
             <div className="rep-stats">
               <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.excellent} borderRadius={10} inset={-2} intensity={0.4} />
-                <span className="pip pip-ok" />
-                <span className="rep-num">{rep.asClient.paid}</span> paid
+                <GlowBorder colors={BAND_GLOW.excellent} borderRadius={11} inset={-1} intensity={0.45} />
+                <span className="stat-inner">
+                  <span className="pip pip-ok" />
+                  <span className="rep-num">{rep.asClient.paid}</span> paid
+                </span>
               </div>
               <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.bad} borderRadius={10} inset={-2} intensity={0.4} />
-                <span className="pip pip-bad" />
-                <span className="rep-num">{rep.asClient.silentDefaults}</span>{" "}
-                silent defaults
+                <GlowBorder colors={BAND_GLOW.bad} borderRadius={11} inset={-1} intensity={0.45} />
+                <span className="stat-inner">
+                  <span className="pip pip-bad" />
+                  <span className="rep-num">{rep.asClient.silentDefaults}</span>{" "}
+                  silent defaults
+                </span>
               </div>
               {rep.asClient.windowOpenDefaults > 0 && (
                 <div className="stat-box">
-                  <GlowBorder colors={BAND_GLOW.bad} borderRadius={10} inset={-2} intensity={0.4} />
-                  <span className="pip pip-bad" />
-                  <span className="rep-num">
-                    {rep.asClient.windowOpenDefaults}
-                  </span>{" "}
-                  defaulted, window open
+                  <GlowBorder colors={BAND_GLOW.bad} borderRadius={11} inset={-1} intensity={0.45} />
+                  <span className="stat-inner">
+                    <span className="pip pip-bad" />
+                    <span className="rep-num">
+                      {rep.asClient.windowOpenDefaults}
+                    </span>{" "}
+                    defaulted, window open
+                  </span>
                 </div>
               )}
               <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.fair} borderRadius={10} inset={-2} intensity={0.4} />
-                <span className="pip pip-warn" />
-                <span className="rep-num">{rep.asClient.disputed}</span>{" "}
-                disputed
+                <GlowBorder colors={BAND_GLOW.fair} borderRadius={11} inset={-1} intensity={0.45} />
+                <span className="stat-inner">
+                  <span className="pip pip-warn" />
+                  <span className="rep-num">{rep.asClient.disputed}</span>{" "}
+                  disputed
+                </span>
               </div>
               <div className="stat-box stat-plain">
-                <span className="rep-num">{formatCad(rep.asClient.volumeCents)}</span>{" "}
-                as client
+                <span className="stat-inner">
+                  <span className="rep-num">{formatCad(rep.asClient.volumeCents)}</span>{" "}
+                  as client
+                </span>
               </div>
               <div className="stat-box stat-plain">
-                <span className="rep-num">
-                  {formatCad(rep.asFreelancer.volumeCents)}
-                </span>{" "}
-                as freelancer ({rep.asFreelancer.total} gigs)
+                <span className="stat-inner">
+                  <span className="rep-num">
+                    {formatCad(rep.asFreelancer.volumeCents)}
+                  </span>{" "}
+                  as freelancer ({rep.asFreelancer.total} gigs)
+                </span>
               </div>
             </div>
 

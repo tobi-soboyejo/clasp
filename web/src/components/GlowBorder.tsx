@@ -7,35 +7,43 @@ export function GlowBorder({
   borderRadius = 16,
   inset = -3,
   intensity = 0.5,
+  margin = 0,
 }: {
   colors: string[];
   borderRadius?: number;
   inset?: number;
   intensity?: number;
+  margin?: number;
 }) {
   return (
-    <PulsingBorder
-      colors={colors}
-      colorBack="#00000000"
-      roundness={0.35}
-      thickness={0.07}
-      softness={0.6}
-      intensity={intensity}
-      bloom={0.45}
-      spots={3}
-      spotSize={0.5}
-      pulse={0.4}
-      smoke={0.3}
-      smokeSize={0.6}
-      speed={1}
+    <div
       style={{
         position: "absolute",
         inset,
         borderRadius,
         pointerEvents: "none",
         zIndex: 0,
+        isolation: "isolate",
       }}
-    />
+    >
+      <PulsingBorder
+      colors={colors}
+      colorBack="#00000000"
+      roundness={0.4}
+      thickness={0.08}
+      softness={0.4}
+      intensity={intensity}
+      bloom={0.45}
+      spots={3}
+      spotSize={0.55}
+      pulse={0.45}
+      smoke={0}
+      smokeSize={0}
+      speed={1}
+      margin={margin}
+        style={{ width: "100%", height: "100%", borderRadius }}
+      />
+    </div>
   );
 }
 

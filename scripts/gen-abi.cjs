@@ -9,3 +9,4 @@ function gen(artifact, out, exportName) {
 }
 gen('contracts/out/ClaspRegistry.sol/ClaspRegistry.json', 'web/src/lib/abi.ts', 'claspAbi');
 gen('contracts/out/ClaspBoard.sol/ClaspBoard.json', 'web/src/lib/abi-board.ts', 'boardAbi');
+gen('contracts/out/ClaspProfile.sol/ClaspProfile.json', 'web/src/lib/abi-profile.ts', 'claspProfileAbi');

@@ -24,6 +24,10 @@ Before a gig starts, freelancer and client **co-sign the agreement onchain**
 The registry never rules on who's right. It publishes behavior on mutually
 signed commitments, and anyone can look up a wallet before working with them.
 
+**The client never needs to own crypto.** Co-signing works gaslessly: the
+client signs a free EIP-712 typed message in their wallet — like DocuSign —
+and the freelancer submits it onchain (`cosignBySig`), paying the fee.
+
 **This is a registry, not an escrow.** No funds ever move through the
 contract — real-world payments are fiat (e-transfer etc.). The chain records
 *commitments and outcomes*, not money.
@@ -64,7 +68,7 @@ aggregate counters.
 
 | | |
 |---|---|
-| Contract | [`0xf08e5b2B3A0E72CD5Fb3d8468827d09a1175718c`](https://testnet.monadvision.com/address/0xf08e5b2B3A0E72CD5Fb3d8468827d09a1175718c) |
+| Contract | [`0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f`](https://testnet.monadvision.com/address/0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f) |
 | Chain ID | 10143 |
 | RPC | `https://testnet-rpc.monad.xyz` |
 | Deploy tx | `(see explorer — ClaspRegistry creation tx)` |

@@ -2,6 +2,11 @@
 // Regenerate: node scripts/gen-abi.cjs
 export const claspAbi = [
   {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
     "type": "function",
     "name": "DISPUTE_WINDOW",
     "inputs": [],
@@ -10,6 +15,19 @@ export const claspAbi = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "DOMAIN_SEPARATOR",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
     "stateMutability": "view"
@@ -48,6 +66,24 @@ export const claspAbi = [
         "name": "id",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "cosignBySig",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "signature",
+        "type": "bytes",
+        "internalType": "bytes"
       }
     ],
     "outputs": [],
@@ -447,6 +483,11 @@ export const claspAbi = [
   {
     "type": "error",
     "name": "DisputeWindowClosed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidSignature",
     "inputs": []
   },
   {

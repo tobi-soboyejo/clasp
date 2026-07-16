@@ -45,6 +45,27 @@ contract ClaspRegistry {
     ///         A default left undisputed past this window is a "silent default".
     uint256 public constant DISPUTE_WINDOW = 14 days;
 
+    /// @dev EIP-712 domain + typed struct for gasless co-signing: the client
+    ///      signs a free typed message; anyone (the freelancer) submits it and
+    ///      pays the gas. The client never needs funds — signing suffices.
+    bytes32 public immutable DOMAIN_SEPARATOR;
+    bytes32 private constant COSIGN_TYPEHASH =
+        keccak256("Cosign(uint256 agreementId,address client)");
+
+    constructor() {
+        DOMAIN_SEPARATOR = keccak256(
+            abi.encode(
+                keccak256(
+                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+                ),
+                keccak256(bytes("Clasp")),
+                keccak256(bytes("1")),
+                block.chainid,
+                address(this)
+            )
+        );
+    }
+
     Agreement[] private _agreements;
 
     event AgreementCreated(
@@ -72,6 +93,7 @@ contract ClaspRegistry {
     error ProposalExpired();
     error DeadlineNotPassed();
     error DisputeWindowClosed();
+    error InvalidSignature();
 
     /// @notice Freelancer proposes an agreement. It counts for nothing until
     ///         the client co-signs; an un-cosigned proposal past its deadline
@@ -117,6 +139,50 @@ contract ClaspRegistry {
         a.cosignedAt = uint64(block.timestamp);
 
         emit AgreementCosigned(id, a.freelancer, a.client);
+    }
+
+    /// @notice Gasless co-sign: submit the client's EIP-712 signature over
+    ///         (agreementId, client). Replay-safe without nonces — a signature
+    ///         only works while the agreement is Proposed, and it's bound to
+    ///         this chain, contract, id, and client.
+    function cosignBySig(uint256 id, bytes calldata signature) external {
+        Agreement storage a = _get(id);
+        if (a.status != Status.Proposed) revert WrongStatus();
+        if (block.timestamp > a.deadline) revert ProposalExpired();
+
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                DOMAIN_SEPARATOR,
+                keccak256(abi.encode(COSIGN_TYPEHASH, id, a.client))
+            )
+        );
+        if (_recover(digest, signature) != a.client) revert InvalidSignature();
+
+        a.status = Status.Active;
+        a.cosignedAt = uint64(block.timestamp);
+
+        emit AgreementCosigned(id, a.freelancer, a.client);
+    }
+
+    function _recover(bytes32 digest, bytes calldata signature)
+        private
+        pure
+        returns (address)
+    {
+        if (signature.length != 65) revert InvalidSignature();
+        bytes32 r = bytes32(signature[0:32]);
+        bytes32 s_ = bytes32(signature[32:64]);
+        uint8 v = uint8(signature[64]);
+        // reject malleable s values (EIP-2)
+        if (
+            uint256(s_)
+                > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0
+        ) revert InvalidSignature();
+        if (v != 27 && v != 28) revert InvalidSignature();
+        address signer = ecrecover(digest, v, r, s_);
+        if (signer == address(0)) revert InvalidSignature();
+        return signer;
     }
 
     /// @notice Client confirms they paid. Terminal good mark — confirming is

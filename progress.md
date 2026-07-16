@@ -89,3 +89,6 @@
 - ✅ Round 6: deal-type presets + deadline countdown, border effects
   resolved (shader on tile, CSS pulse on stat boxes), board form/dropdowns
   brought into the design system.
+- ✅ FINAL FEATURE: gasless EIP-712 co-sign (cosignBySig), registry
+  redeployed+verified at 0xac64…A43f, reseeded, proven live end-to-end,
+  two-sided UI. 43/43 tests. HARD FREEZE — docs/video/submit remain.

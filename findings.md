@@ -237,3 +237,20 @@
   Board filter dropdowns restyled (custom chevron, no heavy focus ring),
   "Offering + Seeking" capitalized, board post form now inherits the
   design-system labels/wells.
+
+## 2026-07-16 — FINAL FEATURE: gasless co-sign (EIP-712), then hard freeze
+
+- ClaspRegistry FINAL: 0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f
+  (Sourcify-verified). Adds cosignBySig(id, sig): client signs EIP-712
+  Cosign(agreementId,client) for FREE — no MON, no faucet, no funded
+  wallet — anyone submits and pays gas. Replay-safe without nonces
+  (single-shot per Proposed status, domain-bound to chain+contract).
+  EIP-2 malleability + v checks in _recover. 43/43 tests (6 new).
+- Verified end-to-end ON LIVE CHAIN: agreement #7 created, CLIENT1 signed
+  via cast wallet sign --data (typed data), deployer submitted → Active.
+- UI: client sees "Sign for free (no gas)" → signature code + copy;
+  freelancer sees paste-and-submit box while Proposed. Demo line:
+  "my client never needs to own crypto — they just sign, like DocuSign."
+- Data reseeded on final registry (8 agreements incl. gasless #7).
+  Board/Profile contracts unchanged. HARD FREEZE from here: README, video,
+  social, submit only.

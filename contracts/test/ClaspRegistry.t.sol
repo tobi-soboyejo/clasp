@@ -286,6 +286,93 @@ contract ClaspRegistryTest is Test {
         registry.cosign(42);
     }
 
+    // ------------------------------------------------------- gasless co-sign
+
+    function _sigFor(uint256 id, address clientAddr, uint256 pk)
+        internal
+        view
+        returns (bytes memory)
+    {
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                registry.DOMAIN_SEPARATOR(),
+                keccak256(
+                    abi.encode(
+                        keccak256("Cosign(uint256 agreementId,address client)"),
+                        id,
+                        clientAddr
+                    )
+                )
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(pk, digest);
+        return abi.encodePacked(r, s, v);
+    }
+
+    function test_CosignBySig_HappyPath() public {
+        (address sigClient, uint256 pk) = makeAddrAndKey("sigClient");
+        vm.prank(freelancer);
+        uint256 id = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+
+        // anyone can submit — here the freelancer pays the gas
+        vm.prank(freelancer);
+        registry.cosignBySig(id, _sigFor(id, sigClient, pk));
+
+        ClaspRegistry.Agreement memory a = registry.getAgreement(id);
+        assertEq(uint8(a.status), uint8(ClaspRegistry.Status.Active));
+        assertEq(a.cosignedAt, uint64(block.timestamp));
+    }
+
+    function test_RevertWhen_SigFromWrongSigner() public {
+        (address sigClient,) = makeAddrAndKey("sigClient");
+        (, uint256 wrongPk) = makeAddrAndKey("intruder");
+        vm.prank(freelancer);
+        uint256 id = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        bytes memory sig = _sigFor(id, sigClient, wrongPk);
+        vm.expectRevert(ClaspRegistry.InvalidSignature.selector);
+        registry.cosignBySig(id, sig);
+    }
+
+    function test_RevertWhen_SigForOtherAgreement() public {
+        (address sigClient, uint256 pk) = makeAddrAndKey("sigClient");
+        vm.startPrank(freelancer);
+        uint256 a0 = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        uint256 a1 = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        vm.stopPrank();
+        bytes memory sig = _sigFor(a0, sigClient, pk);
+        vm.expectRevert(ClaspRegistry.InvalidSignature.selector);
+        registry.cosignBySig(a1, sig);
+    }
+
+    function test_RevertWhen_SigReplayedAfterCosign() public {
+        (address sigClient, uint256 pk) = makeAddrAndKey("sigClient");
+        vm.prank(freelancer);
+        uint256 id = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        bytes memory sig = _sigFor(id, sigClient, pk);
+        registry.cosignBySig(id, sig);
+        vm.expectRevert(ClaspRegistry.WrongStatus.selector);
+        registry.cosignBySig(id, sig);
+    }
+
+    function test_RevertWhen_SigAfterDeadline() public {
+        (address sigClient, uint256 pk) = makeAddrAndKey("sigClient");
+        vm.prank(freelancer);
+        uint256 id = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        bytes memory sig = _sigFor(id, sigClient, pk);
+        vm.warp(deadline + 1);
+        vm.expectRevert(ClaspRegistry.ProposalExpired.selector);
+        registry.cosignBySig(id, sig);
+    }
+
+    function test_RevertWhen_MalformedSig() public {
+        (address sigClient,) = makeAddrAndKey("sigClient");
+        vm.prank(freelancer);
+        uint256 id = registry.createAgreement(sigClient, AMOUNT_CENTS, deadline, SCOPE_HASH);
+        vm.expectRevert(ClaspRegistry.InvalidSignature.selector);
+        registry.cosignBySig(id, hex"deadbeef");
+    }
+
     function test_DisputeWindowIs14Days() public view {
         assertEq(registry.DISPUTE_WINDOW(), 14 days);
     }

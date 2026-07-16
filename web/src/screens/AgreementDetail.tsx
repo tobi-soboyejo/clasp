@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   useAccount,
   useReadContract,
+  useSignTypedData,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -79,6 +80,13 @@ export function AgreementDetail() {
 
   const [disputeReason, setDisputeReason] = useState("");
   const [showDisputeForm, setShowDisputeForm] = useState(false);
+  const [pastedSig, setPastedSig] = useState("");
+  const {
+    signTypedData,
+    data: gaslessSig,
+    isPending: signing,
+    error: signError,
+  } = useSignTypedData();
   const [pendingTxKey, setPendingTxKey] = useState<TxKey | null>(null);
 
   const { writeContract, data: txHash, isPending, error: writeError } =
@@ -233,6 +241,56 @@ export function AgreementDetail() {
               <button className="connect-btn" disabled={busy} onClick={() => write("cosign")}>
                 {busy ? "Signing…" : "Co-sign agreement"}
               </button>
+              {!gaslessSig && (
+                <>
+                  <p className="form-hint" style={{ marginBottom: 0 }}>
+                    No MON for gas? Sign for free instead — like DocuSign.
+                    The proposer submits it and pays the network fee.
+                  </p>
+                  <button
+                    className="btn-secondary"
+                    disabled={signing}
+                    onClick={() =>
+                      signTypedData({
+                        domain: {
+                          name: "Clasp",
+                          version: "1",
+                          chainId: monadTestnet.id,
+                          verifyingContract: CLASP_ADDRESS,
+                        },
+                        types: {
+                          Cosign: [
+                            { name: "agreementId", type: "uint256" },
+                            { name: "client", type: "address" },
+                          ],
+                        },
+                        primaryType: "Cosign",
+                        message: { agreementId: id, client: a.client },
+                      })
+                    }
+                  >
+                    {signing ? "Check your wallet…" : "Sign for free (no gas)"}
+                  </button>
+                </>
+              )}
+              {gaslessSig && (
+                <div className="share-box" style={{ margin: 0 }}>
+                  <code>{gaslessSig}</code>
+                  <button
+                    className="connect-btn"
+                    onClick={() => navigator.clipboard.writeText(gaslessSig)}
+                  >
+                    Copy signature
+                  </button>
+                  <span className="field-note">
+                    Signed ✓ — free, no gas spent. Send this code back to the
+                    proposer; they submit it and the agreement goes Active.
+                  </span>
+                </div>
+              )}
+              {signError && !/rejected|denied/i.test(signError.message) && (
+                <p className="form-error">{signError.message.split("\n")[0]}</p>
+              )}
             </>
           )}
           {canConfirm && (
@@ -286,6 +344,41 @@ export function AgreementDetail() {
               </button>
             </>
           )}
+        </div>
+      )}
+
+      {isFreelancer && a.status === Status.Proposed && onMonad && (
+        <div className="action-box">
+          <p className="form-hint">
+            Client signed without gas? Paste their signature code — you
+            submit it and pay the network fee; their signature is what
+            counts.
+          </p>
+          <label>
+            Client's signature code
+            <textarea
+              rows={2}
+              value={pastedSig}
+              onChange={(e) => setPastedSig(e.target.value.trim())}
+              placeholder="0x…"
+              spellCheck={false}
+            />
+          </label>
+          <button
+            className="connect-btn"
+            disabled={busy || !/^0x[0-9a-fA-F]{130}$/.test(pastedSig)}
+            onClick={() => {
+              setPendingTxKey("cosigned");
+              writeContract({
+                address: CLASP_ADDRESS,
+                abi: claspAbi,
+                functionName: "cosignBySig",
+                args: [id, pastedSig as `0x${string}`],
+              });
+            }}
+          >
+            {busy ? "Submitting…" : "Submit their signature"}
+          </button>
         </div>
       )}
 

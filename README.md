@@ -1,10 +1,8 @@
-<img src="web/public/logo.svg" width="110" alt="Handshake logo" />
+<img src="web/public/logo.svg" width="110" alt="Clasp logo" />
 
-# Clasp
+# Clasp — the credit check for deals between strangers
 
-**A payment-reputation registry for informal gig work, on Monad testnet.**
-
-**Live: [claspscore.com](https://claspscore.com)**
+**Live: [claspscore.com](https://claspscore.com) · Monad Testnet (chain 10143)**
 
 A client owed me $2,000 for completed work and vanished — I'm pursuing it
 legally. There was no way to check his payment history before taking the job,
@@ -12,16 +10,20 @@ and there's no way for the next freelancer to learn from what happened to me.
 Informal work has no credit bureau: payment behavior lives in private inboxes
 and dies there. Clasp is the credit check I wish I'd run.
 
+Gig work is the wedge, not the boundary — the primitive is **any co-signed
+promise to pay with a public outcome**: freelance jobs, game-account sales,
+trades, rent.
+
 ## How it works
 
-Before a gig starts, freelancer and client **co-sign the agreement onchain**
-(scope hash, amount, deadline). After the deadline:
+Before the deal starts, both parties **co-sign the agreement onchain**
+(scope fingerprint, amount, deadline). Then:
 
-- Client confirms payment → builds their good reputation ✅
-- Client doesn't pay → freelancer flags a default; the client gets a 14-day
-  window to dispute 🔴
-- Client stays silent → the silence itself is recorded — a **silent default**,
-  the worst mark 🔇
+- Payer confirms payment → builds their good history
+- Payer doesn't pay → the other side flags a default; the payer gets a
+  14-day window to dispute
+- Payer stays silent → the silence itself is recorded — a **silent
+  default**, the worst mark
 
 The registry never rules on who's right. It publishes behavior on mutually
 signed commitments, and anyone can look up a wallet before working with them.
@@ -31,79 +33,51 @@ client signs a free EIP-712 typed message in their wallet — like DocuSign —
 and the freelancer submits it onchain (`cosignBySig`), paying the fee.
 
 **This is a registry, not an escrow.** No funds ever move through the
-contract — real-world payments are fiat (e-transfer etc.). The chain records
+contracts — real-world payments are fiat (e-transfer etc.). The chain records
 *commitments and outcomes*, not money.
 
-**Why onchain?** Any centralized "clients who don't pay" database gets sued or
-pressured into deleting records — the worst actors are the most litigious. A
-permissionless contract has no one to send the cease-and-desist to. And no
-false entries are possible: nobody appears in the registry without their own
-cryptographic signature on the original agreement.
+**Why onchain?** Any centralized "clients who don't pay" database gets sued
+or pressured into deleting records — the worst actors are the most
+litigious. A permissionless contract has no one to send the cease-and-desist
+to. And no false entries are possible: nobody appears in the registry
+without their own cryptographic signature on the original agreement.
 
-## Structure
+## The contracts (all Sourcify-verified on Monad testnet)
 
-```
-contracts/   Foundry project — ClaspRegistry.sol + tests
-web/         React + Vite + wagmi frontend (coming)
-```
-
-## Contract
-
-One contract, deliberately minimal: [`ClaspRegistry.sol`](contracts/src/ClaspRegistry.sol)
+| Contract | Address | Purpose |
+|---|---|---|
+| [`ClaspRegistry`](contracts/src/ClaspRegistry.sol) | [`0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f`](https://testnet.monadvision.com/address/0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f) | Co-signed agreements + outcomes (the record) |
+| [`ClaspBoard`](contracts/src/ClaspBoard.sol) | [`0x432a33034C9ccabD73c17C08B9237a2aC6C81Ae9`](https://testnet.monadvision.com/address/0x432a33034C9ccabD73c17C08B9237a2aC6C81Ae9) | Listings board — every poster wears their score |
+| [`ClaspProfile`](contracts/src/ClaspProfile.sol) | [`0x3A853A7Ed366C545c2f37928CA6e08dcBE694e69`](https://testnet.monadvision.com/address/0x3A853A7Ed366C545c2f37928CA6e08dcBE694e69) | Self-declared display names (never replace the address) |
 
 State machine per agreement:
 
 ```
-PROPOSED ──cosign()──▶ ACTIVE ──confirmPaid()──▶ PAID (terminal, good mark)
-    │                    │
-    │ never cosigned:    └─ after deadline: flagDefault() ──▶ DEFAULTED
-    ▼ expires silently                                          │
- (expired)                          dispute() within 14 days ──▶ DISPUTED (terminal)
-                                    window passes silently  ──▶ stays DEFAULTED
-                                                                 ("silent default", terminal)
+PROPOSED ──cosign() / cosignBySig()──▶ ACTIVE ──confirmPaid()──▶ PAID (terminal, good mark)
+    │                                    │
+    │ never co-signed:                   └─ after deadline: flagDefault() ──▶ DEFAULTED
+    ▼ expires silently                                                          │
+ (expired, counts for nothing)                  dispute() within 14 days ──▶ DISPUTED (terminal)
+                                                window passes silently   ──▶ stays DEFAULTED
+                                                                              ("silent default")
 ```
 
-Reputation is computed **off-chain from events** — the contract stores no
-aggregate counters.
+**Gasless co-sign:** `cosignBySig(id, signature)` verifies an EIP-712
+signature over `Cosign(agreementId, client)`. Replay-safe without nonces — a
+signature only works while the agreement is Proposed and is domain-bound to
+this chain and contract. Signature malleability (EIP-2) rejected.
 
-### Deployment (Monad testnet)
+**Identity by annotation, not replacement:** display names are deliberately
+non-unique — squatting "Lakeshore Solar" gains nothing because the address
+and its record are the identity; the name is a human handle, always shown
+beside the address. Your own local petnames (browser-only) override anything
+a wallet claims about itself.
 
-| | |
-|---|---|
-| Contract | [`0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f`](https://testnet.monadvision.com/address/0xac644Cc4967d9e3735c2dA3D8c8C881637B3A43f) |
-| Chain ID | 10143 |
-| RPC | `https://testnet-rpc.monad.xyz` |
-| Deploy tx | `(see explorer — ClaspRegistry creation tx)` |
-| Source verified | Sourcify (exact match) — readable on the explorer |
-
-Design note: Monad's public RPC caps `eth_getLogs` at a 100-block range, so
-the app never scans logs. The contract stores every lifecycle timestamp in
-its state and exposes a batch getter (`getAgreements`) — the whole UI,
-including reputation, is derived from plain `eth_call` reads. Events are
-still emitted for anyone who wants to index later.
-
-## Run the tests
-
-```bash
-git clone --recursive <this-repo>
-cd handshake/contracts
-forge test -vv
-```
-
-24 tests cover the happy path, default + dispute, silent default, and every
-guard revert (wrong caller, wrong status, pre-deadline flag, expired dispute
-window, boundary conditions).
-
-## Known limitations (honest ones)
-
-1. **Sybil / fresh wallets** — a burned client can rotate to a new wallet.
-   v1 mitigation: lookup surfaces wallet age and history depth, so blankness
-   is itself a red flag (like a business with no credit history). Roadmap:
-   identity attestations, client activation stakes.
-2. **Scope text is off-chain** — only the keccak256 hash is onchain; v1 keeps
-   the full text in localStorage. Roadmap: IPFS.
-3. **Cold start** — a registry's value grows with network size. Roadmap: embed
-   as a reputation layer inside existing freelance platforms.
+**Design note — no indexer, no API keys:** Monad's public RPC caps
+`eth_getLogs` at a 100-block range, so the app never scans logs. The
+contracts store every lifecycle timestamp in state and expose batch getters;
+the whole UI, including reputation, derives from plain `eth_call` reads.
+Events are still emitted for anyone who wants to index later.
 
 ## The Clasp Score is not a black box
 
@@ -140,33 +114,59 @@ only scores what was signed. Defaults count the moment they're flagged (the
 registry warns the *next* person now; a dispute restores partial credit the
 moment it lands). Under three concluded outcomes the score is provisional.
 No history shows "—", deliberately framed as *unknown, not bad*. When a
-wallet with old bad marks builds a paid streak, the card says so — recency
-decay makes rehabilitation a property of the math, not a promise.
+wallet with old bad marks builds a paid streak, the card says so — decay
+makes rehabilitation a property of the math, not a promise.
 
-## Beyond gig work
+Vetting the *paid* side instead (freelancer, seller, sub-contractor,
+landlord)? The lookup's track-record lens shows delivered-and-paid
+engagements, earnings, contested outcomes, current load, and repeat
+counterparties — the one signal money can't fake cheaply.
 
-The primitive is **any co-signed promise to pay with a public outcome**, and
-it works today for more than freelance jobs. **Virtual-asset deals** — game
-accounts, items, boosting services — are gray markets full of pseudonymous
-strangers with zero recourse, and they map straight onto the registry
-(seller = payee, buyer = payer, scope describes the asset; a non-delivery
-disagreement surfaces through the dispute mechanic with both claims visible).
-Chinese courts recognizing game accounts as inheritable private property
-underlines that these assets are real economic property with real markets.
+## Run it yourself (≈3 minutes)
+
+```bash
+git clone --recursive https://github.com/tobi-soboyejo/clasp
+cd clasp/contracts && forge test -vv        # 43 tests, 3 suites
+cd ../web && npm install && npm run dev      # http://localhost:5173
+```
+
+No API keys, no indexer, no backend — the app talks straight to Monad's
+public RPC. Every number you see anywhere in the app is a live chain read;
+the demo data was created with real testnet transactions
+(`scripts/seed.sh`, `scripts/seed-day5.sh` — outcomes staged with short
+real deadlines, not mocks).
+
+## Known limitations (honest ones)
+
+1. **Sybil / fresh wallets** — a burned client can rotate to a new wallet.
+   v1 mitigation: lookup surfaces wallet age and history depth, so blankness
+   is itself a red flag (like a business with no credit history) — and if
+   someone refuses to co-sign at all, that's your answer too.
+2. **Agreement text is off-chain** — only the keccak256 fingerprint is
+   onchain; v1 keeps full text in localStorage, and the UI verifies any
+   pasted text against the fingerprint. Roadmap: IPFS.
+3. **Cold start** — a registry's value grows with network size. Roadmap:
+   embed as a reputation layer inside existing freelance and field-service
+   platforms.
+4. **Scores measure payment, not quality** — a payer confirming is a payer
+   who accepted the work, and rehires are strong signal, but Clasp does not
+   pretend to referee craftsmanship.
 
 ## Roadmap
 
-Rent is the next binding — rent history is the classic "invisible credit"
-problem, and every kept promise in this registry is credit rehabilitation
-for someone the bureaus can't see. The accountability direction matters:
-tenant-facing landlord history first, not landlord-facing tenant scores —
-punching up, not down. Also ahead: symmetric outcome flags (either party can
-flag non-performance — completes the virtual-asset story), a transparent
-scoring model (v1 deliberately publishes raw outcomes and shows its
-arithmetic), identity attestations and vouching for newcomers, and embedding
-as a reputation layer inside field-service and freelance platforms where
-these clients already live.
+- **ZK selective disclosure** — prove "my score is above 700" without
+  revealing the underlying history (the privacy answer for a public
+  registry).
+- **Attestation composability** — publish outcomes via EAS-style
+  attestations so other apps can build on them (lending against reputation).
+- **Rent as the next vertical** — rent history is the classic "invisible
+  credit" problem; landlord-accountability first (punching up, not down).
+- **Symmetric outcome flags** — either party flags non-performance;
+  completes the virtual-asset story.
+- **Client activation stakes**, identity attestations, and vouching for
+  newcomers.
 
 ---
 
-Built for the [Spark hackathon](https://buildanything.so/hackathons/spark) (Monad testnet track), July 2026.
+Built solo (with Claude) in six days for the Spark hackathon
+(BuildAnything × Monad), July 2026.

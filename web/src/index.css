@@ -1387,3 +1387,66 @@ a.score-chip:hover {
       inset 0 0 8px -6px color-mix(in srgb, var(--glow) 45%, transparent);
   }
 }
+
+/* the comet border: a traveling bright arc ON the tile's exterior border,
+   plus a blurred bloom outside it. Pure CSS — aligned by construction.
+   (The Paper shader draws its ring inset from its canvas; after much
+   archaeology it's retired in favor of this — see findings 2026-07-15.) */
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.score-comet {
+  border: none;
+}
+
+.score-comet::before,
+.score-comet::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: conic-gradient(
+    from var(--spin),
+    transparent 0deg 200deg,
+    currentColor 285deg,
+    #fff 315deg,
+    currentColor 330deg,
+    transparent 352deg 360deg
+  );
+  animation: comet-spin 3.6s linear infinite;
+  pointer-events: none;
+}
+
+/* the crisp ring: mask everything but a 2.5px border band */
+.score-comet::before {
+  padding: 2.5px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* the bloom: same arc, blurred, behind */
+.score-comet::after {
+  filter: blur(12px);
+  opacity: 0.55;
+  z-index: -1;
+}
+
+@keyframes comet-spin {
+  to {
+    --spin: 360deg;
+  }
+}
+
+.score-comet > span {
+  position: relative;
+  z-index: 1;
+}

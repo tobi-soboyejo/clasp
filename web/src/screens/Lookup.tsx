@@ -27,7 +27,6 @@ import {
 
 import { useAllAgreements } from "../hooks/useAllAgreements";
 import { AddressChip } from "../components/AddressChip";
-import { GlowBorder, BAND_GLOW } from "../components/GlowBorder";
 
 const KIND_LABEL: Record<ScoredOutcome["kind"], string> = {
   paid: "paid",
@@ -254,15 +253,9 @@ export function Lookup() {
             </div>
 
             <div className="rep-grade-row">
-              <div className={`rep-score ${scoreClass(hs.band)}`}>
-                {hs.score !== null && (
-                  <GlowBorder
-                    colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
-                    borderRadius={26}
-                    inset={-12}
-                    intensity={0.75}
-                  />
-                )}
+              <div
+                className={`rep-score ${scoreClass(hs.band)} ${hs.score !== null ? "score-comet" : ""}`}
+              >
                 <span className="rep-score-num">
                   {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
                 </span>

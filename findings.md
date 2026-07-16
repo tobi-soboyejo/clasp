@@ -221,3 +221,19 @@
   generated from the logo via @resvg/resvg-js (scripts stay reproducible).
   SSR declined deliberately: Vite SPA whose content is client-side chain
   reads — framework migration days before deadline buys nothing judges see.
+
+## 2026-07-15 — round 6: presets, countdown, border-effect resolution
+
+- New Agreement: deal-type preset chips (Contract work / Virtual item /
+  Rent / Custom) — same contract underneath; presets set scope placeholder,
+  field labels, and default deadline (+7d work, +24h items, 1st of next
+  month for rent). Live ⏱ countdown on agreement detail while
+  Proposed/Active (red once past deadline).
+- Border effect final resolution after 5 shader rounds: PulsingBorder's
+  ring geometry is approximate on wide boxes (aspectRatio/margin quirks;
+  margins are per-axis FRACTIONS). Shader kept on the near-square score
+  tile where it renders true; stat boxes use a border-accurate CSS pulse
+  (border in band color + breathing outer glow via --glow custom prop).
+  Board filter dropdowns restyled (custom chevron, no heavy focus ring),
+  "Offering + Seeking" capitalized, board post form now inherits the
+  design-system labels/wells.

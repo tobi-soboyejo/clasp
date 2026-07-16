@@ -288,7 +288,7 @@ export function Board() {
             setFilterKind(e.target.value === "all" ? "all" : (Number(e.target.value) as 0 | 1))
           }
         >
-          <option value="all">Offering + seeking</option>
+          <option value="all">Offering + Seeking</option>
           <option value="0">Offering</option>
           <option value="1">Seeking</option>
         </select>

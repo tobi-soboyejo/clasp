@@ -28,6 +28,29 @@ import {
 } from "../lib/agreements";
 import { AddressChip } from "../components/AddressChip";
 
+/** Live countdown to the payment deadline — ticks every second. */
+function Countdown({ deadline }: { deadline: bigint }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const ms = Number(deadline) * 1000 - now;
+  const overdue = ms < 0;
+  const abs = Math.abs(ms);
+  const dd = Math.floor(abs / 86_400_000);
+  const hh = Math.floor((abs % 86_400_000) / 3_600_000);
+  const mm = Math.floor((abs % 3_600_000) / 60_000);
+  const ss = Math.floor((abs % 60_000) / 1000);
+  const txt =
+    dd > 0 ? `${dd}d ${hh}h ${mm}m` : hh > 0 ? `${hh}h ${mm}m ${ss}s` : `${mm}m ${ss}s`;
+  return (
+    <span className={overdue ? "countdown countdown-over" : "countdown"}>
+      {overdue ? `⏱ ${txt} past deadline` : `⏱ ${txt} remaining`}
+    </span>
+  );
+}
+
 export function AgreementDetail() {
   const { id: idParam } = useParams();
   const id = useMemo(() => {
@@ -153,7 +176,15 @@ export function AgreementDetail() {
         </div>
         <div>
           <dt>Payment deadline</dt>
-          <dd>{formatTimestamp(a.deadline)}</dd>
+          <dd>
+            {formatTimestamp(a.deadline)}
+            {(a.status === Status.Proposed || a.status === Status.Active) && (
+              <>
+                <br />
+                <Countdown deadline={a.deadline} />
+              </>
+            )}
+          </dd>
         </div>
         {a.status === Status.Defaulted && nowSec <= disputeDeadline && (
           <div>

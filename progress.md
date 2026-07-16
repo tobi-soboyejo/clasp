@@ -86,3 +86,6 @@
   https://clasp-rosy.vercel.app, landing copy broadened. 32/32 tests.
 - ✅ Round 5: ClaspProfile identity layer (self-declared names, 37/37 tests,
   seeded personas), shader glow fixed to borders, OG image + meta tags.
+- ✅ Round 6: deal-type presets + deadline countdown, border effects
+  resolved (shader on tile, CSS pulse on stat boxes), board form/dropdowns
+  brought into the design system.

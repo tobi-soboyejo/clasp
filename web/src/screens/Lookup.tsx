@@ -257,9 +257,9 @@ export function Lookup() {
               <div className={`rep-score ${scoreClass(hs.band)}`}>
                 <GlowBorder
                   colors={BAND_GLOW[hs.band.toLowerCase().replace(" ", "-")] ?? BAND_GLOW["no-history"]}
-                  borderRadius={16}
-                  inset={-2}
-                  intensity={0.65}
+                  borderRadius={26}
+                  inset={-12}
+                  intensity={0.75}
                 />
                 <span className="rep-score-num">
                   {hs.score !== null ? <ScoreNumber value={hs.score} /> : "—"}
@@ -334,15 +334,13 @@ export function Lookup() {
             </div>
 
             <div className="rep-stats">
-              <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.excellent} borderRadius={11} inset={-1} intensity={0.45} />
+              <div className="stat-box stat-glow" style={{ "--glow": "#74c887" } as React.CSSProperties}>
                 <span className="stat-inner">
                   <span className="pip pip-ok" />
                   <span className="rep-num">{rep.asClient.paid}</span> paid
                 </span>
               </div>
-              <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.bad} borderRadius={11} inset={-1} intensity={0.45} />
+              <div className="stat-box stat-glow" style={{ "--glow": "#ec8873" } as React.CSSProperties}>
                 <span className="stat-inner">
                   <span className="pip pip-bad" />
                   <span className="rep-num">{rep.asClient.silentDefaults}</span>{" "}
@@ -350,8 +348,7 @@ export function Lookup() {
                 </span>
               </div>
               {rep.asClient.windowOpenDefaults > 0 && (
-                <div className="stat-box">
-                  <GlowBorder colors={BAND_GLOW.bad} borderRadius={11} inset={-1} intensity={0.45} />
+                <div className="stat-box stat-glow" style={{ "--glow": "#ec8873" } as React.CSSProperties}>
                   <span className="stat-inner">
                     <span className="pip pip-bad" />
                     <span className="rep-num">
@@ -361,8 +358,7 @@ export function Lookup() {
                   </span>
                 </div>
               )}
-              <div className="stat-box">
-                <GlowBorder colors={BAND_GLOW.fair} borderRadius={11} inset={-1} intensity={0.45} />
+              <div className="stat-box stat-glow" style={{ "--glow": "#e0c46e" } as React.CSSProperties}>
                 <span className="stat-inner">
                   <span className="pip pip-warn" />
                   <span className="rep-num">{rep.asClient.disputed}</span>{" "}

@@ -168,5 +168,5 @@ real deadlines, not mocks).
 
 ---
 
-Built solo (with Claude) in six days for the Spark hackathon
+Built solo (with Claude) in four days for the Spark hackathon
 (BuildAnything × Monad), July 2026.
